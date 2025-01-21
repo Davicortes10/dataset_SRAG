@@ -1,0 +1,3 @@
+pip install PyMysql
+pip install pyspark
+pip install gcsfs
