@@ -1,3 +1,5 @@
 pip install PyMysql
 pip install pyspark
 pip install gcsfs
+pip install playwright
+pip install pandas
