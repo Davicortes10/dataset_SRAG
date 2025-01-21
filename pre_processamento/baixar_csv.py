@@ -6,7 +6,7 @@ def automate_download():
 
     with sync_playwright() as p:
         print("Iniciando o navegador...")
-        browser = p.chromium.launch(headless=False)  # Defina headless=True para rodar sem interface gráfica
+        browser = p.chromium.launch(headless=True)  # Defina headless=True para rodar sem interface gráfica
         context = browser.new_context()
 
         # Acessar a página inicial
