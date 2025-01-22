@@ -9,6 +9,8 @@ class PreprocessDataset:
     def __init__(self,file_path):
         self.file_path = file_path
         self.db_connection = "jdbc:mysql://34.170.252.6:3306/srag_datalake"
+        self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.170.252.6/srag_datalake"
+        self.conn = create_engine(self.gcp_db_connection)
 
         self.spark = SparkSession.builder \
             .appName("Atualizar Data Lake") \
@@ -50,4 +52,13 @@ class PreprocessDataset:
             return
 
         print("Processo de atualização do Data Lake finalizado com sucesso!")
+    
+    def ler_gcp_DB(self):
+        # Escrevendo a consulta SQL para ler os dados da tabela
+        query = "SELECT * FROM srag_warehouse"
+        pd.set_option("display.max_columns", None)
+        # Lendo os dados para um DataFrame Pandas
+        df = pd.read_sql(query, con=self.conn)
 
+        # Exibindo os primeiros registros
+        print(df.head())
