@@ -13,7 +13,7 @@ class PreprocessDataset:
 
     def ler_gcp_DB(self):
         # Escrevendo a consulta SQL para ler os dados da tabela
-        query = "SELECT * FROM srag_warehouse"
+        query = "SELECT * FROM srag_datalake"
         pd.set_option("display.max_columns", None)
         # Lendo os dados para um DataFrame Pandas
         df = pd.read_sql(query, con=self.conn)
