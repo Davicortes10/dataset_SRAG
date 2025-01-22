@@ -47,4 +47,5 @@ def download_mysql_connector():
 
 # Executar a função
 if __name__ == "__main__":
+    print("TESTANDO")
     download_mysql_connector()
