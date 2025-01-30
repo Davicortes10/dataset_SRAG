@@ -31,7 +31,7 @@ class PreprocessDataset:
         Remove colunas específicas de um DataFrame pandas.
         """
         columns_to_remove = ["TP_IDADE", "SEM_NOT", "SEM_PRI", "COD_IDADE", "CO_MUN_RES", "SURTO",
-                             "CO_RG_INTE", "CO_MU_INTE", "HISTO_VGM", "PCR_SARS2", "PAC_COCBO",
+                             "CO_RG_INTE", "CO_REGIONA", "CO_MU_INTE", "HISTO_VGM", "PCR_SARS2", "PAC_COCBO",
                              "ID_REGIONA", "CO_MU_NOT", "CO_UNI_NOT", "CO_PAIS", "COD_RG_RESI",
                              "SURTO_SG", "PAIS_VGM", "CO_VGM", "LO_PS_VGM"]
         # Filtra apenas as colunas que existem no DataFrame
