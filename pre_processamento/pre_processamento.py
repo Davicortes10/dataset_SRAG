@@ -33,8 +33,7 @@ class PreprocessDataset:
         columns_to_remove = ["TP_IDADE", "SEM_NOT", "SEM_PRI", "COD_IDADE", "CO_MUN_RES", "SURTO",
                              "CO_RG_INTE", "CO_MU_INTE", "HISTO_VGM", "PCR_SARS2", "PAC_COCBO",
                              "ID_REGIONA", "CO_MU_NOT", "CO_UNI_NOT", "CO_PAIS", "COD_RG_RESI",
-                             "SURTO_SG", "DT_RAIOX", "DT_ENCERRA", "PAIS_VGM", "CO_VGM", "LO_PS_VGM",
-                             "DT_RT_VGM", "DT_TOMO", "DT_RES_AN", "DT_CO_SOR", "DT_RES"]
+                             "SURTO_SG", "PAIS_VGM", "CO_VGM", "LO_PS_VGM"]
         # Filtra apenas as colunas que existem no DataFrame
         existing_columns = [col for col in columns_to_remove if col in self.df.columns]
         self.df = self.df.drop(columns=existing_columns)
