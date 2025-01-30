@@ -55,20 +55,25 @@ class PreprocessDataset:
         print("Conversão de tipos finalizada.")
         print(self.df[date_columns].info())
 
-    """def processar_colunas_numericas(self):
-      AINDA VOU CONFIRMAR SE TÀ FUNCIONANDO, SE QUISER PODE IR TENTANDO AI
-        # Colunas numéricas (usando inferência de tipos)
-        numeric_columns = self.df.select_dtypes(include=['object']).columns
-        for col in numeric_columns:
-            try:
-                # Tenta converter para numérico, forçando erros a se tornarem NaN
+    def tem_texto(series):
+        """Verifica se a coluna contém qualquer caractere não numérico (excluindo espaços)."""
+        return series.astype(str).str.strip().str.contains(r"[a-zA-Z]", regex=True, na=False).any()
+
+
+    def processar_colunas_numericas(self):
+        for col in self.df.select_dtypes(include=['object']).columns:
+            self.df
+            # Remover espaços em branco extras antes de verificar
+            self.df[col] = self.df[col].astype(str).str.strip()
+
+            if not self.tem_texto(self.df[col]):  # Só converte se não houver letras
                 self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
-                print(f"Coluna '{col}' convertida para numérica.")
-            except Exception as e:
-                print(f"Erro ao converter coluna '{col}': {e}")
-    """
-    """def processar_colunas_texto(self):
-         AINDA VOU CONFIRMAR SE TÀ FUNCIONANDO, SE QUISER PODE IR TENTANDO AI
+                print(f"✅ Coluna '{col}' convertida para numérico.")
+            else:
+                print(f"🔤 Coluna '{col}' contém texto e foi mantida como string.")
+
+    def processar_colunas_texto(self):
+
         # Converte as colunas para texto (string), ou para categoria se necessário
         for col in self.df.select_dtypes(include=['object']).columns:
             try:
@@ -82,7 +87,8 @@ class PreprocessDataset:
                     print(f"Coluna '{col}' convertida para string.")
             except Exception as e:
                 print(f"Erro ao converter coluna '{col}': {e}")
-    """
+
+
 
 
     def executar_pipeline(self):
@@ -93,8 +99,9 @@ class PreprocessDataset:
         self.remove_columns()
         print("\nIniciando o processo de conversão de tipos...")
         self.processar_colunas_data()
-        self.processar_colunas_texto()
         self.processar_colunas_numericas()
+        self.processar_colunas_texto()
+
         print(self.df.info())
         print("\nPipeline executada com sucesso.")
 
