@@ -31,10 +31,8 @@ class PreprocessDataset:
         Remove colunas específicas de um DataFrame pandas.
         """
         columns_to_remove = ["TP_IDADE", "SEM_NOT", "SEM_PRI", "COD_IDADE", "CO_MUN_RES", "SURTO",
-                             "CO_RG_INTE", "CO_MU_INTE", "HISTO_VGM", "PCR_SARS2", "PAC_COCBO",
-                             "ID_REGIONA", "CO_MU_NOT", "CO_UNI_NOT", "CO_PAIS", "COD_RG_RESI",
-                             "SURTO_SG", "DT_RAIOX", "DT_ENCERRA", "PAIS_VGM", "CO_VGM", "LO_PS_VGM",
-                             "DT_RT_VGM", "DT_TOMO", "DT_RES_AN", "DT_CO_SOR", "DT_RES"]
+                             "CO_RG_INTE", "CO_REGIONA", "CO_MU_INTE", "HISTO_VGM", "PCR_SARS2", "PAC_COCBO", "CO_MU_NOT", "CO_UNI_NOT", "CO_PAIS", "COD_RG_RESI",
+                             "SURTO_SG", "PAIS_VGM", "CO_VGM", "LO_PS_VGM"]
         # Filtra apenas as colunas que existem no DataFrame
         existing_columns = [col for col in columns_to_remove if col in self.df.columns]
         self.df = self.df.drop(columns=existing_columns)
@@ -90,6 +88,33 @@ class PreprocessDataset:
 
 
 
+    def tratar_dados_faltantes_pais(df, valor_exterior="EXTERIOR"):
+        """
+        Preenche valores nulos nas colunas especificadas com 'EXTERIOR'.
+    
+        Parâmetros:
+        - df (DataFrame): O DataFrame Pandas contendo os dados.
+        - colunas (list): Lista de colunas onde os valores nulos serão preenchidos.
+        - valor_exterior (str): O valor a ser preenchido (padrão: 'EXTERIOR').
+    
+        Retorna:
+        - df (DataFrame): O DataFrame atualizado.
+        """
+        colunas = ["SG_UF",
+        "ID_RG_RESI",
+        "ID_MN_RESI",
+        "CS_ZONA"]
+        # Verifica se todas as colunas existem no DataFrame
+        colunas_faltantes = [col for col in colunas if col not in df.columns]
+        if colunas_faltantes:
+            raise ValueError(f"As colunas {colunas_faltantes} não existem no DataFrame.")
+    
+        # Preencher os valores nulos com "EXTERIOR"
+        for col in colunas:
+            df.loc[df[col].isnull(), col] = valor_exterior
+            print(f"Valores nulos preenchidos na coluna {col} com '{valor_exterior}'.")
+    
+        return df  # Retorna o DataFrame atualizado
 
     def executar_pipeline(self):
         """
