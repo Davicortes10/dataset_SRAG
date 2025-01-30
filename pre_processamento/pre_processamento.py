@@ -82,6 +82,33 @@ class PreprocessDataset:
                 print(f"Erro ao converter coluna '{col}': {e}")
     """
 
+    def tratar_dados_faltantes_pais(df, valor_exterior="EXTERIOR"):
+        """
+        Preenche valores nulos nas colunas especificadas com 'EXTERIOR'.
+    
+        Parâmetros:
+        - df (DataFrame): O DataFrame Pandas contendo os dados.
+        - colunas (list): Lista de colunas onde os valores nulos serão preenchidos.
+        - valor_exterior (str): O valor a ser preenchido (padrão: 'EXTERIOR').
+    
+        Retorna:
+        - df (DataFrame): O DataFrame atualizado.
+        """
+        colunas = ["SG_UF",
+        "ID_RG_RESI",
+        "ID_MN_RESI",
+        "CS_ZONA"]
+        # Verifica se todas as colunas existem no DataFrame
+        colunas_faltantes = [col for col in colunas if col not in df.columns]
+        if colunas_faltantes:
+            raise ValueError(f"As colunas {colunas_faltantes} não existem no DataFrame.")
+    
+        # Preencher os valores nulos com "EXTERIOR"
+        for col in colunas:
+            df.loc[df[col].isnull(), col] = valor_exterior
+            print(f"Valores nulos preenchidos na coluna {col} com '{valor_exterior}'.")
+    
+        return df  # Retorna o DataFrame atualizado
 
     def executar_pipeline(self):
         """
