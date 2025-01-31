@@ -110,6 +110,51 @@ class PreprocessDataset:
     
         return df  # Retorna o DataFrame atualizado
 
+    def preencher_com_moda(df, coluna = "DT_DIGITA"):
+        """
+        Preenche os valores nulos (NaN) de uma coluna com a moda (valor mais frequente).
+    
+        Parâmetros:
+        - df (pd.DataFrame): DataFrame Pandas contendo os dados.
+        - coluna (str): Nome da coluna a ser preenchida.
+    
+        Retorna:
+        - pd.DataFrame: DataFrame atualizado com os valores nulos preenchidos.
+        """
+        if coluna not in df.columns:
+            raise ValueError(f"A coluna '{coluna}' não existe no DataFrame.")
+    
+        # Encontrar a moda (o valor mais frequente)
+        moda_valor = df[coluna].mode()[0] if not df[coluna].mode().empty else None
+    
+        # Preencher os valores nulos com a moda
+        if moda_valor is not None:
+            df[coluna].fillna(moda_valor, inplace=True)
+            print(f"Valores nulos na coluna '{coluna}' foram preenchidos com a moda: {moda_valor}.")
+        else:
+            print(f"Não foi possível encontrar a moda para a coluna '{coluna}'.")
+    
+        return df
+
+    def preencher_sintomas_com_9(df):
+        """
+        Preenche valores nulos (NaN) nas colunas de sintomas com 9.
+    
+        Parâmetros:
+        - df (pd.DataFrame): DataFrame com os dados.
+        - colunas_sintomas (list): Lista de colunas de sintomas a serem preenchidas.
+    
+        Retorna:
+        - df atualizado com os valores nulos preenchidos com 9.
+        """
+        colunas_sintomas = ["FEBRE",
+    "TOSSE","GARGANTA", "DISPNEIA", "DESC_RESP", "SATURACAO", "DIARREIA","VOMITO", "DOR_ABD", "FADIGA", "PERD_OLFT", "PERD_PALA"]
+        df[colunas_sintomas] = df[colunas_sintomas].fillna(9)
+        print(f"Valores nulos preenchidos com 9 nas colunas: {', '.join(colunas_sintomas)}")
+        return df
+
+
+
     def executar_pipeline(self):
         """
         Executa todos os passos da pipeline em sequência.
