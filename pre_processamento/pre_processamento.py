@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 import pandas as pd
 import pymysql
@@ -59,14 +60,14 @@ class PreprocessDataset:
 
 
     def processar_colunas_numericas(self):
+        """Converte colunas para numérico, ignorando NaN e texto."""
         for col in self.df.select_dtypes(include=['object']).columns:
-            self.df
-            # Remover espaços em branco extras antes de verificar
+            # Remove espaços e verifica se há texto
             self.df[col] = self.df[col].astype(str).str.strip()
 
-            if not self.tem_texto(self.df[col]):  # Só converte se não houver letras
-                self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
-                print(f"✅ Coluna '{col}' convertida para numérico.")
+            if not self.df[col].str.contains(r"[a-zA-Z]", regex=True, na=False).any():
+                self.df[col] = self.df[col].apply(lambda x: pd.to_numeric(x, errors="coerce") if pd.notna(x) else x)
+                print(f"🔢 Coluna '{col}' convertida para numérico (NaNs preservados).")
             else:
                 print(f"🔤 Coluna '{col}' contém texto e foi mantida como string.")
 
@@ -116,6 +117,35 @@ class PreprocessDataset:
     
         return df  # Retorna o DataFrame atualizado
 
+    def preencher_data_nascimento(self):
+        """
+        Preenche valores ausentes na coluna 'DT_NASC' com base na idade da pessoa.
+        A idade é subtraída da data atual para estimar o ano de nascimento.
+        """
+        # Obtém a data atual
+        data_atual = datetime.today()
+
+        def calcular_data_nascimento(idade):
+            """ Retorna a data de nascimento estimada com base na idade. """
+            if pd.notna(idade):  # Se a idade não for NaN
+                ano_nascimento = data_atual.year - int(idade)
+                return datetime(ano_nascimento, 1, 1)  # Assume o primeiro dia do ano
+            return None
+
+        antes = self.df["DT_NASC"].isna().sum()
+        # Aplica a função apenas onde a data de nascimento está ausente (NaN)
+        self.df["DT_NASC"] = self.df.apply(
+            lambda row: calcular_data_nascimento(row["NU_IDADE_N"]) if pd.isna(row["DT_NASC"]) else row["DT_NASC"],
+            axis=1
+        )
+        # Conta quantas foram preenchidas
+        depois = self.df["DT_NASC"].isna().sum()
+        preenchidos = antes - depois
+
+        print(f"✅ {preenchidos} registros de data de nascimento foram preenchidos!")
+
+        print("✅ Dados de nascimento preenchidos com sucesso!")
+
     def executar_pipeline(self):
         """
         Executa todos os passos da pipeline em sequência.
@@ -124,8 +154,8 @@ class PreprocessDataset:
         self.remove_columns()
         print("\nIniciando o processo de conversão de tipos...")
         self.processar_colunas_data()
-        self.processar_colunas_numericas()
-        self.processar_colunas_texto()
+
+        self.preencher_data_nascimento()
 
         print(self.df.info())
         print("\nPipeline executada com sucesso.")
