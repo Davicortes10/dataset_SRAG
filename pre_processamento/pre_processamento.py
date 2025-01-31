@@ -127,7 +127,7 @@ class PreprocessDataset:
         data_atual = datetime.today()
 
         def calcular_data_nascimento(idade):
-            """ Retorna a data de nascimento estimada com base na idade. """
+            """ Retorna a data de nascimento estimada com base na idade."""
             if pd.notna(idade):  # Se a idade não for NaN
                 ano_nascimento = data_atual.year - int(idade)
                 return datetime(ano_nascimento, 1, 1)  # Assume o primeiro dia do ano
@@ -190,6 +190,33 @@ class PreprocessDataset:
         print(f"Valores nulos preenchidos com 9 nas colunas: {', '.join(colunas_sintomas)}")
         return df
 
+    def preencher_amostra_com_9(self):
+        """
+               Preenche os valores ausentes na coluna 'AMOSTRA' com '9',
+               define 'TP_AMOSTRA' como '9' e 'OUT_AMOST' como 'IGNORADO' para esses registros.
+               """
+
+        # Removendo espaços extras da coluna AMOSTRA
+        self.df["AMOSTRA"] = self.df["AMOSTRA"].astype(str).str.strip()
+
+        # Condição para identificar valores vazios ou nulos corretamente
+        condicao = self.df["AMOSTRA"].isna() | (self.df["AMOSTRA"] == "") | (self.df["AMOSTRA"].str.lower() == "nan") | (
+                    self.df["AMOSTRA"].str.lower() == "none")
+
+        # Contar quantos registros estão vazios antes da modificação
+        registros_vazios = condicao.sum()
+        print(f"🔍 {registros_vazios} registros possuem 'AMOSTRA' vazia ou nula antes da correção.")
+
+        # Preencher as colunas desejadas nos registros filtrados
+        self.df.loc[condicao, ["AMOSTRA", "TP_AMOSTRA"]] = "9"
+        self.df.loc[condicao, "OUT_AMOST"] = "IGNORADO"
+
+        # Contar quantos ainda estão vazios depois da conversão
+        depois = self.df["AMOSTRA"].isna().sum() + (self.df["AMOSTRA"] == "").sum()
+        preenchidos = registros_vazios - depois
+
+        print(f"✅ {preenchidos} registros foram preenchidos com '9' e 'IGNORADO'!")
+
 
 
 
@@ -201,8 +228,8 @@ class PreprocessDataset:
         self.remove_columns()
         print("\nIniciando o processo de conversão de tipos...")
         self.processar_colunas_data()
-
-        self.preencher_data_nascimento()
+       # self.preencher_data_nascimento()
+        self.preencher_amostra_com_9()
 
         print(self.df.info())
         print("\nPipeline executada com sucesso.")
