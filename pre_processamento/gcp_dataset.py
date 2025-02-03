@@ -65,3 +65,8 @@ class GCP_Dataset:
         except Exception as e:
             print(f"❌ Erro ao ler os dados do banco GCP: {str(e)}")
             return None
+
+    
+
+    
+    

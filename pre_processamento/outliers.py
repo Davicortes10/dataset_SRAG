@@ -5,7 +5,7 @@ class Outliers:
     def __init__(self,df):
         self.df = df
 
-    def verificar_outliers(df):
+    def verificar_outliers(self, df):
         """
         Identifica outliers em um DataFrame analisando colunas de idade, datas e texto.
 
@@ -54,7 +54,7 @@ class Outliers:
 
         print("\n✅ Verificação concluída!")
 
-    def remover_outliers(df):
+    def remover_outliers(self, df):
         """
         Remove outliers do DataFrame em colunas de idade, datas e texto.
 
@@ -103,5 +103,6 @@ class Outliers:
     
     def executar_outliers(self):
         self.verificar_outliers(self.df)
-        self.remover_outliers(self.df)
+        df = self.remover_outliers(self.df)
+        return df
 
