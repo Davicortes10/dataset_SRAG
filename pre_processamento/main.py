@@ -91,7 +91,7 @@ class Oficial:
             engine = create_engine(f"mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
 
             # Enviar os dados para o banco sem dividir em chunks
-            print(f"📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")
+            print(f"📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")#e
 
             df.to_sql("srag_warehouse", con=engine, if_exists=if_exists, index=False, method="multi")
 
