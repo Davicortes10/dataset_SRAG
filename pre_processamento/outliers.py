@@ -33,7 +33,7 @@ class Outliers:
         self.df = df.copy()  # Criar cópia do DataFrame para evitar modificar o original
 
         # 📌 Lista de colunas a serem ignoradas
-        colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC", "ID_UNIDADE"]
+        colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC"]
 
         # 📌 Verificar colunas de idade
         for col in self.df.select_dtypes(include=[np.number]).columns:
@@ -115,7 +115,7 @@ class Outliers:
         linhas_removidas = set()
 
         # 📌 Lista de colunas que não devem ser alteradas
-        colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC", "ID_UNIDADE"]
+        colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC"]
 
         # 📌 Normalizar a coluna CS_SEXO (substituir 'M' → 1 e 'F' → 2)
         if "CS_SEXO" in self.df.columns:
