@@ -67,10 +67,12 @@ class PreprocessDataset:
         Executa todos os passos da pipeline em sequência.
         """
         print("\nIniciando o processo de conversão de tipos...")
-        self.converter_tipos_colunas()
-
+        df = self.converter_tipos_colunas()
         print(self.df.info())
         print("\nPipeline executada com sucesso.")
+        return df
+
+        
 
 
 

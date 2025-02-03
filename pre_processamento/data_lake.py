@@ -5,6 +5,7 @@ import time
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType, StructField, StructType
 from playwright.sync_api import sync_playwright
+import os
 
 
 class Data_Lake:
