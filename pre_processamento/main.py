@@ -53,7 +53,7 @@ class Oficial:
 
         return self.df
     
-    def pre_processamento(self,):
+    def pre_processamento(self):
         pre = PreprocessDataset(self.df)
         self.df = pre.converter_tipos_colunas()
         return self.df
