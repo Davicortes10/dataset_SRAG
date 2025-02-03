@@ -9,7 +9,7 @@ Este projeto tem como objetivo **analisar e extrair insights valiosos** do datas
 ✅ Limpar e **pré-processar** os dados para remover inconsistências.  
 ✅ Criar **modelos preditivos** para análise de risco.  
 ✅ Gerar **visualizações interativas** para facilitar a interpretação dos dados.  
-✅ Integrar os dados com um **banco de dados GCP** para melhor armazenamento e escalabilidade.
+✅ Integrar os dados com um **banco de dados GCP** para melhor armazenamento e escalabilidade.  
 
 ---
 
@@ -29,7 +29,10 @@ Este projeto tem como objetivo **analisar e extrair insights valiosos** do datas
 
 ## **📂 Estrutura do Projeto**
 📁 `dataset/` → Armazena os arquivos brutos e tratados do SRAG.  
-📁 `pre_processamento/` → Scripts para limpeza e transformação dos dados.   
+📁 `pre_processamento/` → Scripts para limpeza e transformação dos dados.  
+📁 `modelo/` → Algoritmos de Machine Learning e análises estatísticas.  
+📁 `visualizacao/` → Gráficos e relatórios interativos.  
+📁 `database/` → Conexão e manipulação de dados no GCP.  
 📜 `README.md` → Documentação do projeto.  
 
 ---
@@ -40,7 +43,7 @@ Este projeto tem como objetivo **analisar e extrair insights valiosos** do datas
 3️⃣ **Análise Exploratória** → Estatísticas descritivas e visualizações.  
 4️⃣ **Modelagem Preditiva** → Algoritmos de aprendizado de máquina para prever gravidade dos casos.  
 5️⃣ **Integração com Banco de Dados** → Armazenamento no **MySQL do Google Cloud Platform (GCP)**.  
-6️⃣ **Geração de Relatórios** → Insights sobre a evolução da SRAG.
+6️⃣ **Geração de Relatórios** → Insights sobre a evolução da SRAG.  
 
 ---
 
