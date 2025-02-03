@@ -63,10 +63,12 @@ class Oficial:
     def outliers(self):
         oute = Outliers(self.df)
         self.df = oute.executar_outliers()
+        self.df = self.pre_processamento()
     
     def normalizacao(self):
         bot = Normalizacao(self.df)
         self.df = bot.executar_normalizacao()
+        self.df = self.pre_processamento()
     
     def enviar_para_gcp(self,df,  if_exists="replace"):
         """

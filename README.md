@@ -27,28 +27,32 @@ Este projeto tem como objetivo **analisar e extrair insights valiosos** do datas
 
 ---
 
-## **📂 Estrutura do Projeto**
-📁 `dataset/` → Armazena os arquivos brutos e tratados do SRAG.  
-📁 `pre_processamento/` → Scripts para limpeza e transformação dos dados.  
-📁 `modelo/` → Algoritmos de Machine Learning e análises estatísticas.  
-📁 `visualizacao/` → Gráficos e relatórios interativos.  
-📁 `database/` → Conexão e manipulação de dados no GCP.  
-📜 `README.md` → Documentação do projeto.  
+## **💂 Autores**
+👨‍💻 **Davi Oliveira Cortes** - Matrícula: 2020034190  
+👨‍💻 **Bryan Windson Queiroz de Souza** - Matrícula: 2021065987  
+👨‍💻 **Aleanse dos Santos Lima Rego** - Matrícula: 2021053215  
+
+📅 **Última Atualização:** *02/02/2025*  
+📈 **Versão:** *1.0*  
 
 ---
 
-## **🔄 Pipeline de Processamento**
-1️⃣ **Obtenção dos Dados** → Download e carregamento do dataset.  
-2️⃣ **Pré-Processamento** → Tratamento de valores nulos, conversão de tipos e remoção de outliers.  
-3️⃣ **Análise Exploratória** → Estatísticas descritivas e visualizações.  
-4️⃣ **Modelagem Preditiva** → Algoritmos de aprendizado de máquina para prever gravidade dos casos.  
-5️⃣ **Integração com Banco de Dados** → Armazenamento no **MySQL do Google Cloud Platform (GCP)**.  
-6️⃣ **Geração de Relatórios** → Insights sobre a evolução da SRAG.  
+## **🎓 Agradecimentos**
+Gostaríamos de agradecer à **Universidade Federal do Maranhão (UFMA)**, ao nosso professor **Doutor Thales Levi Azevedo Valente**, e a todos os colegas de curso que contribuíram direta ou indiretamente para este projeto.
 
 ---
 
-## **🖥️ Como Executar o Projeto**
-1️⃣ **Clone o repositório**:
-```sh
-git clone https://github.com/seu_usuario/projeto-srag.git
-cd projeto-srag
+## **📃 Licença**
+Este material é resultado de um trabalho acadêmico para a disciplina **"Mineração de Dados e Aplicação na Engenharia"**, sob a orientação do professor **Dr. Thales Levi Azevedo Valente**, no **semestre letivo 2024.2**, do curso **Engenharia da Computação**, na **Universidade Federal do Maranhão (UFMA)**.
+
+Todo o material sob esta licença é **software livre**:  
+✔ Pode ser usado para fins acadêmicos e comerciais **sem nenhum custo**.  
+✔ Não há papelada, nem royalties, nem restrições de "copyleft" do tipo GNU.  
+✔ Ele é licenciado sob os termos da **Licença MIT**, conforme descrito abaixo, e, portanto, é **compatível com a GPL** e também se qualifica como **software de código aberto**.  
+✔ É de **domínio público**.
+
+O espírito desta licença é que você **é livre para usar este material para qualquer finalidade, sem nenhum custo**. O único requisito é que, **se você utilizá-lo, nos dê o devido crédito**.  
+
+
+📌 **Desenvolvido por Davi Oliveira Cortes, Bryan Windson Queiroz de Souza e Aleanse dos Santos Lima Rego** 🚀
+
