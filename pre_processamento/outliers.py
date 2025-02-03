@@ -5,51 +5,74 @@ class Outliers:
     def __init__(self,df):
         self.df = df
 
-    def verificar_outliers(self, df):
+    def verificar_outliers(df):
         """
-        Identifica outliers em um DataFrame analisando colunas de idade, datas, texto e variáveis categóricas.
+        Identifica e trata outliers em colunas de idade, datas, texto e variáveis categóricas.
+
+        Regras:
+        - Idade: Remove valores < 0 ou > 120.
+        - Datas: Detecta valores antes de 1900 ou no futuro.
+        - Texto: Verifica campos categóricos e identifica possíveis inconsistências.
+        - Categorias: Checa colunas que devem ter valores fixos (exemplo: CS_SEXO, CS_RACA).
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame Pandas contendo os dados.
 
         Retorna:
-        - Um dicionário com detalhes dos outliers detectados.
+        - df_corrigido (pd.DataFrame): DataFrame corrigido, com ajustes aplicados.
+        - outliers (dict): Dicionário contendo os outliers detectados.
         """
 
         # Criando um dicionário para armazenar os outliers detectados
         outliers = {"idade": [], "datas": [], "texto": [], "categóricos": []}
 
-        print("🔍 Iniciando verificação de outliers...\n")
+        print("\n🔍 Iniciando verificação de outliers...\n")
+
+        df_corrigido = df.copy()  # Criar cópia do DataFrame para evitar modificar o original
+
+        # 📌 Corrigir a coluna CS_SEXO (substituir 'M' → 1 e 'F' → 2)
+        if "CS_SEXO" in df_corrigido.columns:
+            df_corrigido["CS_SEXO"] = df_corrigido["CS_SEXO"].replace({"M": 1, "F": 2})
+            print("✅ Coluna 'CS_SEXO' normalizada (M → 1, F → 2).")
+
+        # 📌 Corrigir a coluna FATOR_RISC (substituir 'S' → 1 e 'N' → 2)
+        if "FATOR_RISC" in df_corrigido.columns:
+            df_corrigido["FATOR_RISC"] = df_corrigido["FATOR_RISC"].replace({"S": 1, "N": 2})
+            print("✅ Coluna 'FATOR_RISC' normalizada (S → 1, N → 2).")
 
         # 📌 Verificar colunas de idade (assumindo que são numéricas)
-        for col in df.select_dtypes(include=[np.number]).columns:
+        for col in df_corrigido.select_dtypes(include=[np.number]).columns:
             if "idade" in col.lower():  # Identifica colunas relacionadas à idade
-                outliers_idade = df[(df[col] < 0) | (df[col] > 120)][col]
+                outliers_idade = df_corrigido[(df_corrigido[col] < 0) | (df_corrigido[col] > 120)][col]
                 if not outliers_idade.empty:
                     print(f"⚠️ Outliers encontrados na coluna '{col}' (valores fora do intervalo 0-120):")
                     print(outliers_idade)
                     outliers["idade"].append({col: outliers_idade.tolist()})
 
-        # 📌 Verificar colunas categóricas (ex: CS_SEXO)
+        # 📌 Verificar colunas categóricas com valores esperados
         categorias_esperadas = {
             "CS_SEXO": [1, 2, 9],  # Apenas valores válidos: 1 (M), 2 (F), 9 (Ignorado)
-            "CS_RACA": [1, 2, 3, 4, 5, 9]  # Exemplo para uma coluna de raça
+            "CS_RACA": [1, 2, 3, 4, 5, 9],
+            "CS_ZONA": [1, 2, 3, 9],
+            "OUTRO_DES": [9],
+            "OUT_AMOST": [9],
+            "MORB_DESC": [9]
         }
 
         for col, valores_validos in categorias_esperadas.items():
-            if col in df.columns:
-                outliers_categoricos = df[~df[col].isin(valores_validos)][col]
+            if col in df_corrigido.columns:
+                outliers_categoricos = df_corrigido[~df_corrigido[col].isin(valores_validos)][col]
                 if not outliers_categoricos.empty:
                     print(f"⚠️ Valores inválidos na coluna categórica '{col}':")
                     print(outliers_categoricos)
                     outliers["categóricos"].append({col: outliers_categoricos.tolist()})
 
-        # 📌 Verificar colunas de datas
-        for col in df.select_dtypes(include=[object]).columns:
+        # 📌 Verificar colunas de datas corretamente
+        for col in df_corrigido.select_dtypes(include=[object]).columns:
             if "data" in col.lower() or "dt_" in col.lower():  # Identifica colunas de data
                 try:
-                    df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
-                    outliers_datas = df[(df[col] < "1900-01-01") | (df[col] > pd.Timestamp.today())][col]
+                    df_corrigido[col] = pd.to_datetime(df_corrigido[col], errors="coerce", dayfirst=True)
+                    outliers_datas = df_corrigido[(df_corrigido[col] < "1900-01-01") | (df_corrigido[col] > pd.Timestamp.today())][col]
                     if not outliers_datas.empty:
                         print(f"⚠️ Outliers em datas na coluna '{col}' (fora do intervalo esperado):")
                         print(outliers_datas)
@@ -57,11 +80,11 @@ class Outliers:
                 except Exception as e:
                     print(f"❌ Erro ao processar coluna de data '{col}': {e}")
 
-        # 📌 Verificar colunas de texto
-        for col in df.select_dtypes(include=[object]).columns:
-            if df[col].nunique() < (len(df) * 0.5):  # Considera colunas categóricas
-                comprimento_texto = df[col].dropna().apply(len)
-                outliers_texto = df[(comprimento_texto < 2) | (comprimento_texto > 50)][col]
+        # 📌 Verificar colunas de texto para detecção de possíveis outliers
+        for col in df_corrigido.select_dtypes(include=[object]).columns:
+            if col not in categorias_esperadas:  # Evita colunas categóricas com valores fixos
+                comprimento_texto = df_corrigido[col].dropna().apply(len)
+                outliers_texto = df_corrigido[(comprimento_texto < 2) | (comprimento_texto > 50)][col]
                 if not outliers_texto.empty:
                     print(f"⚠️ Possíveis outliers em texto na coluna '{col}':")
                     print(outliers_texto)
@@ -150,6 +173,6 @@ class Outliers:
     
     def executar_outliers(self):
         self.verificar_outliers(self.df)
-        df = self.remover_outliers(self.df)
-        return df
+        self.df = self.remover_outliers(self.df)
+        return self.df
 
