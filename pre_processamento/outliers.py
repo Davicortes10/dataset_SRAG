@@ -5,7 +5,7 @@ class Outliers:
     def __init__(self,df):
         self.df = df
 
-    def verificar_outliers(df):
+    def verificar_outliers(self, df):
         """
         Identifica e trata outliers em colunas de idade, datas, texto e variáveis categóricas.
 

@@ -11,12 +11,14 @@ class PreprocessDataset:
     def __init__(self, df):
         self.df = df
     
+    import pandas as pd
+
     def converter_tipos_colunas(self, df):
         """
         Converte automaticamente as colunas do DataFrame para os tipos apropriados:
 
+        - Se o nome da coluna contiver "DT", converte para DATETIME.
         - Se todos os valores forem numéricos, converte para INT.
-        - Se a maioria dos valores estiver no formato de data, converte para DATETIME.
         - Caso contrário, converte para STRING.
 
         Parâmetros:
@@ -33,28 +35,24 @@ class PreprocessDataset:
             print("🔄 Iniciando conversão automática de tipos...\n")
 
             for col in df.columns:
-                # Remover NaNs temporariamente para evitar interferência na análise de tipo
+                # Remover valores nulos temporariamente
                 valores_validos = df[col].dropna()
 
                 if valores_validos.empty:
                     print(f"⚠️ Coluna '{col}' vazia. Mantendo como está.")
                     continue
 
-                # 🚀 Tentar converter para número inteiro
-                if pd.to_numeric(valores_validos, errors='coerce').notna().all():
-                    df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
-                    print(f"✅ Coluna '{col}' convertida para INT.")
-
-                # 🚀 Tentar converter para datetime
-                elif pd.to_datetime(valores_validos, format="%d/%m/%Y", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
-                    df[col] = pd.to_datetime(df[col], format="%d/%m/%Y", errors='coerce')
+                # 🚀 Se o nome da coluna contém 'DT', forçar conversão para DATETIME
+                if "DT" in col.upper():
+                    df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
                     print(f"📅 Coluna '{col}' convertida para DATETIME.")
 
-                elif pd.to_datetime(valores_validos, format="%Y-%m-%d", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
-                    df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce')
-                    print(f"📅 Coluna '{col}' convertida para DATETIME (Formato AAAA-MM-DD).")
+                # 🚀 Se todos os valores são numéricos, converter para INT
+                elif pd.to_numeric(valores_validos, errors="coerce").notna().all():
+                    df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+                    print(f"✅ Coluna '{col}' convertida para INT.")
 
-                # 🚀 Caso contrário, converter para string
+                # 🚀 Caso contrário, converter para STRING
                 else:
                     df[col] = df[col].astype(str)
                     print(f"🔤 Coluna '{col}' convertida para STRING.")
@@ -66,6 +64,7 @@ class PreprocessDataset:
         except Exception as e:
             print(f"❌ Erro ao converter tipos: {str(e)}")
             return df
+
 
 
 
