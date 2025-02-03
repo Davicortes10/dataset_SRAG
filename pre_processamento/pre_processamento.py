@@ -10,14 +10,14 @@ import numpy as np
 class PreprocessDataset:
     def __init__(self, df):
         self.df = df
-
-    def converter_tipos_colunas(df):
+    
+    def converter_tipos_colunas(self, df):
         """
         Converte automaticamente as colunas do DataFrame para os tipos apropriados:
-        
-        - Se todos os valores forem numéricos, converte para int.
-        - Se a maioria dos valores estiver em formato de data, converte para datetime.
-        - Caso contrário, converte para string.
+
+        - Se todos os valores forem numéricos, converte para INT.
+        - Se a maioria dos valores estiver no formato de data, converte para DATETIME.
+        - Caso contrário, converte para STRING.
 
         Parâmetros:
         - df (pd.DataFrame): O DataFrame a ser processado.
@@ -46,9 +46,13 @@ class PreprocessDataset:
                     print(f"✅ Coluna '{col}' convertida para INT.")
 
                 # 🚀 Tentar converter para datetime
-                elif pd.to_datetime(valores_validos, errors='coerce', dayfirst=True).notna().sum() > (len(valores_validos) * 0.8):
-                    df[col] = pd.to_datetime(df[col], errors='coerce', dayfirst=True)
+                elif pd.to_datetime(valores_validos, format="%d/%m/%Y", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
+                    df[col] = pd.to_datetime(df[col], format="%d/%m/%Y", errors='coerce')
                     print(f"📅 Coluna '{col}' convertida para DATETIME.")
+
+                elif pd.to_datetime(valores_validos, format="%Y-%m-%d", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
+                    df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce')
+                    print(f"📅 Coluna '{col}' convertida para DATETIME (Formato AAAA-MM-DD).")
 
                 # 🚀 Caso contrário, converter para string
                 else:
@@ -56,21 +60,14 @@ class PreprocessDataset:
                     print(f"🔤 Coluna '{col}' convertida para STRING.")
 
             print("\n✅ Conversão de tipos concluída!")
+            print(df.info())
             return df
 
         except Exception as e:
             print(f"❌ Erro ao converter tipos: {str(e)}")
             return df
 
-    def executar_pipeline(self):
-        """
-        Executa todos os passos da pipeline em sequência.
-        """
-        print("\nIniciando o processo de conversão de tipos...")
-        df = self.converter_tipos_colunas()
-        print(self.df.info())
-        print("\nPipeline executada com sucesso.")
-        return df
+
 
         
 

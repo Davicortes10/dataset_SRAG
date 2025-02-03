@@ -4,6 +4,8 @@ from dados_faltantes import Dados_Faltantes
 from gcp_dataset import GCP_Dataset
 from pre_processamento import PreprocessDataset
 from outliers import Outliers
+from normalizacao import Normalizacao
+from sqlalchemy import create_engine
 
 class Oficial:
     """
@@ -36,7 +38,7 @@ class Oficial:
             print("✅ Dataset carregado com sucesso!")
             dados_faltantes = Dados_Faltantes(self.df)  # Agora pode ser inicializado corretamente
             self.df = self.tratar_dados_faltantes(dados_faltantes)
-            self.df = self.pre_processamento(self.df)
+            self.df = self.pre_processamento()
 
     def tratar_dados_faltantes(self, dados):
         """
@@ -53,22 +55,64 @@ class Oficial:
 
         return self.df
     
-    def pre_processamento(self,):
+    def pre_processamento(self):
         pre = PreprocessDataset(self.df)
-        self.df = pre.converter_tipos_colunas()
+        self.df = pre.converter_tipos_colunas(self.df)
         return self.df
     
     def outliers(self):
         oute = Outliers(self.df)
-        oute.executar_outliers()
+        self.df = oute.executar_outliers()
+    
+    def normalizacao(self):
+        bot = Normalizacao(self.df)
+        self.df = bot.executar_normalizacao()
+    
+    def enviar_para_gcp(self,df,  if_exists="replace"):
+        """
+        Envia um DataFrame Pandas para uma tabela MySQL no Google Cloud (GCP) sem dividir em chunks.
+
+        Parâmetros:
+        - df (pd.DataFrame): DataFrame a ser enviado para o banco de dados.
+        - host (str): Endereço IP do banco de dados MySQL no GCP (exemplo: "34.170.252.6").
+        - user (str): Nome de usuário do MySQL.
+        - password (str): Senha do banco de dados.
+        - database (str): Nome do banco de dados no GCP.
+        - tabela (str): Nome da tabela onde os dados serão armazenados.
+        - if_exists (str): Opção de escrita na tabela ('fail', 'replace', 'append'). Padrão: 'append'.
+
+        Retorna:
+        - None
+        """
+
+        try:
+            # Criar a conexão com o banco de dados
+            print("🔗 Conectando ao banco de dados GCP MySQL...")
+            engine = create_engine(f"mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
+
+            # Enviar os dados para o banco sem dividir em chunks
+            print(f"📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")
+
+            df.to_sql("srag_warehouse", con=engine, if_exists=if_exists, index=False, method="multi")
+
+            print(f"✅ Upload concluído com sucesso na tabela 'srag_warehouse'!")
+
+        except Exception as e:
+            print(f"❌ Erro ao enviar dados para o banco GCP: {str(e)}")
+    
+    
+
 
     
     
 
 # Criando uma instância da classe Oficial e executando o pipeline corretamente
 bot = Oficial()
-#bot.data_lake()
+bot.data_lake()
 bot.ler_dataset()  # Primeiro, carrega os dados do banco
+bot.outliers()
+bot.normalizacao()
+bot.enviar_para_gcp(bot.df)
 
 
 
