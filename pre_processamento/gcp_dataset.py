@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 import pandas as pd
 import pymysql
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType, StructField, StructType
 import numpy as np
 
 
