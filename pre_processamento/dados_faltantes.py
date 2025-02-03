@@ -147,7 +147,7 @@ class Dados_Faltantes:
                 termos_exclusao = [
                     "município", "regional de saúde", "código (ibge)", "residência", 
                     "municipios", "co_mun", "co_rg", "co_mu", "co_regiona", 
-                    "id_rg", "id_reg", "id_mn"
+                    "id_rg", "id_reg", "id_mn","ID_UNIDADE"
                 ]
 
             # 🔍 Identificar colunas a serem removidas
