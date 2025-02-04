@@ -33,7 +33,7 @@ class Outliers:
         df_corrigido = df.copy()  # Criar cópia do DataFrame para evitar modificar o original
 
         # 📌 Lista de colunas a serem ignoradas
-        colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC", "FATOR_RISC"]
+        colunas_ignoradas = ["CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC", "FATOR_RISC"]
 
         # 📌 Remover outliers na coluna de idade 'NU_IDADE_N'
         if "NU_IDADE_N" in df_corrigido.columns:
