@@ -72,13 +72,13 @@ class Oficial:
         self.df = bot.executar_normalizacao()
         self.df = self.pre_processamento()
 
-    def enviar_para_gcp(self, df, if_exists="replace", batch_size=10000):
+    def enviar_para_gcp(self, df, if_exists="append", batch_size=10000):
         """
         Envia um DataFrame Pandas para uma tabela MySQL no Google Cloud (GCP) usando chunks para evitar consumo excessivo de memória.
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame a ser enviado para o banco de dados.
-        - if_exists (str): Opção de escrita na tabela ('fail', 'replace', 'append'). Padrão: 'replace'.
+        - if_exists (str): Opção de escrita na tabela ('fail', 'append', 'append'). Padrão: 'append'.
         - batch_size (int): Tamanho do chunk para inserção dos dados (padrão: 10.000 linhas por batch).
 
         Retorna:
@@ -108,7 +108,7 @@ class Oficial:
             print(f"❌ Erro ao enviar dados para o banco GCP: {str(e)}")
 
     def executar_classe(self):
-        #self.data_lake()
+        self.data_lake()
         self.ler_dataset()
         self.outliers()
         self.normalizacao()
