@@ -278,24 +278,17 @@ class Dados_Faltantes:
     
     def tratar_dados_faltantes_pais(self, df, valor_exterior="EXTERIOR"):
         """
-        Preenche valores nulos em colunas específicas com um valor padrão (por exemplo, 'EXTERIOR').
+        Preenche valores nulos em colunas específicas com um valor padrão.
+
+        - 'CS_ZONA': Se nula, é preenchida com '10' (representando EXTERIOR).
+        - Outras colunas: São preenchidas com o valor definido em `valor_exterior` (padrão: 'EXTERIOR').
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame contendo os dados.
-        - valor_exterior (str): Valor que será inserido nos campos nulos (padrão: 'EXTERIOR').
-
-        Processo:
-        1. Identifica as colunas que precisam ser preenchidas.
-        2. Verifica se essas colunas existem no DataFrame.
-        3. Preenche os valores nulos com o valor especificado.
-        4. Retorna um DataFrame atualizado e exibe um resumo das alterações.
+        - valor_exterior (str): Valor padrão para preenchimento de outras colunas (exceto 'CS_ZONA').
 
         Retorna:
-        - df (pd.DataFrame): DataFrame atualizado com os valores nulos preenchidos.
-
-        Tratamento de Erros:
-        - Se o DataFrame estiver vazio, exibe um aviso e retorna sem alteração.
-        - Se nenhuma das colunas especificadas estiver presente, exibe um aviso e retorna sem alteração.
+        - df (pd.DataFrame): DataFrame atualizado com os valores preenchidos.
         """
 
         try:
@@ -304,22 +297,27 @@ class Dados_Faltantes:
                 print("⚠️ O DataFrame está vazio. Nenhuma coluna será preenchida.")
                 return df
 
-            # 🔍 Lista das colunas que precisam ser preenchidas
+            # 🔍 Colunas a preencher
             colunas_preenchimento = ["SG_UF", "CS_ZONA"]
 
-            # 🔹 Filtrar apenas as colunas que existem no DataFrame
+            # 🔹 Filtrar apenas colunas que existem no DataFrame
             colunas_existentes = [col for col in colunas_preenchimento if col in df.columns]
 
             if not colunas_existentes:
                 print("⚠️ Nenhuma das colunas especificadas está presente no DataFrame.")
                 return df
 
-            # 🚀 Preencher valores nulos com "EXTERIOR" ou outro valor definido
-            df.loc[:, colunas_existentes] = df[colunas_existentes].fillna(valor_exterior)
+            # 🚀 Preencher valores nulos
+            for col in colunas_existentes:
+                if col == "CS_ZONA":
+                    df[col] = df[col].fillna(10)  # Preencher CS_ZONA com 10 (EXTERIOR)
+                    print("✅ Valores nulos na coluna 'CS_ZONA' preenchidos com 10 (EXTERIOR).")
+                else:
+                    df[col] = df[col].fillna(valor_exterior)
+                    print(f"✅ Valores nulos na coluna '{col}' preenchidos com '{valor_exterior}'.")
 
             # 📊 Exibir estatísticas pós-preenchimento
-            print(f"✅ Valores nulos preenchidos em {len(colunas_existentes)} colunas com '{valor_exterior}'.")
-            print(f"📝 Colunas modificadas: {colunas_existentes}")
+            print(f"\n📝 Colunas modificadas: {colunas_existentes}")
 
             return df
 
