@@ -71,39 +71,59 @@ class Oficial:
         bot = Normalizacao(self.df)
         self.df = bot.executar_normalizacao()
         self.df = self.pre_processamento()
-    
-    def enviar_para_gcp(self,df,  if_exists="replace"):
+
+    def enviar_para_gcp(self, df, if_exists="replace"):
         """
         Envia um DataFrame Pandas para uma tabela MySQL no Google Cloud (GCP) sem dividir em chunks.
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame a ser enviado para o banco de dados.
-        - host (str): Endereço IP do banco de dados MySQL no GCP (exemplo: "34.170.252.6").
-        - user (str): Nome de usuário do MySQL.
-        - password (str): Senha do banco de dados.
-        - database (str): Nome do banco de dados no GCP.
-        - tabela (str): Nome da tabela onde os dados serão armazenados.
-        - if_exists (str): Opção de escrita na tabela ('fail', 'replace', 'append'). Padrão: 'append'.
+        - if_exists (str): Opção de escrita na tabela ('fail', 'replace', 'append'). Padrão: 'replace'.
 
         Retorna:
         - None
         """
 
+        print("\n🔍 Iniciando envio do DataFrame para o GCP...\n")
+
+        # 📌 Verificar se o DataFrame está vazio antes de enviar
+        if df.empty:
+            print("⚠️ Aviso: O DataFrame está vazio. Nenhum dado será enviado para o banco de dados.")
+            return
+
+        if len(df.columns) == 0:
+            print("⚠️ Aviso: O DataFrame não possui colunas. Verifique os dados antes do envio.")
+            return
+
+        # 📌 Exibir os 5 primeiros registros para depuração
+        print("\n📊 Primeiros registros do DataFrame que será enviado:")
+        print(df.head())
+
         try:
             # Criar a conexão com o banco de dados
-            print("🔗 Conectando ao banco de dados GCP MySQL...")
-            engine = create_engine(f"mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
+            print("\n🔗 Conectando ao banco de dados GCP MySQL...")
+            engine = create_engine("mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
 
-            # Enviar os dados para o banco sem dividir em chunks
-            print(f"📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")#e
+            # 📌 Enviar os dados para o banco
+            print(f"\n📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")
 
             df.to_sql("srag_warehouse", con=engine, if_exists=if_exists, index=False, method="multi")
 
-            print(f"✅ Upload concluído com sucesso na tabela 'srag_warehouse'!")
+            # 📌 Confirmar se os dados foram enviados corretamente
+            print(f"\n✅ Upload concluído com sucesso na tabela 'srag_warehouse'!")
+            print(f"🔹 Total de registros enviados: {len(df)}")
 
         except Exception as e:
-            print(f"❌ Erro ao enviar dados para o banco GCP: {str(e)}")
+            print(f"\n❌ Erro ao enviar dados para o banco GCP: {str(e)}")
+
+        print("\n🚀 Processo de envio finalizado.\n")
     
+    def executar_classe(self):
+        self.data_lake()
+        self.ler_dataset()
+        self.outliers()
+        self.normalizacao()
+        self.enviar_para_gcp(self.df)
     
 
 
@@ -112,12 +132,7 @@ class Oficial:
 
 # Criando uma instância da classe Oficial e executando o pipeline corretamente
 bot = Oficial()
-#bot.data_lake()
-bot.ler_dataset()  # Primeiro, carrega os dados do banco
-bot.outliers()
-bot.normalizacao()
-bot.enviar_para_gcp(bot.df)
-
+bot.executar_classe()
 
 
 
