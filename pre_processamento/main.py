@@ -114,9 +114,9 @@ class Oficial:
 bot = Oficial()
 #bot.data_lake()
 bot.ler_dataset()  # Primeiro, carrega os dados do banco
-bot.outliers()
+'''bot.outliers()
 bot.normalizacao()
-bot.enviar_para_gcp(bot.df)
+bot.enviar_para_gcp(bot.df)'''
 
 
 
