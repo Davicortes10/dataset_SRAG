@@ -14,10 +14,11 @@ class PreprocessDataset:
     def converter_tipos_colunas(self):
         """
         Converte automaticamente as colunas do DataFrame para os tipos apropriados:
-
+        
         - Se o nome da coluna contiver "DT", converte para DATETIME.
         - Se todos os valores forem numéricos, converte para INT.
-        - Caso contrário, converte para STRING.
+        - Se houver mistura de números e texto, converte para STRING.
+        - Nenhuma coluna permanecerá com o tipo OBJECT.
 
         Parâmetros:
         - self.df (pd.DataFrame): O DataFrame a ser processado.
@@ -25,13 +26,11 @@ class PreprocessDataset:
         Retorna:
         - pd.DataFrame: O DataFrame atualizado com os tipos de colunas convertidos.
         """
-
         try:
-
             print("🔄 Iniciando conversão automática de tipos...\n")
 
             for col in self.df.columns:
-                # Remover valores nulos temporariamente
+                # Remover valores nulos temporariamente para análise
                 valores_validos = self.df[col].dropna()
 
                 if valores_validos.empty:
@@ -44,11 +43,11 @@ class PreprocessDataset:
                     print(f"📅 Coluna '{col}' convertida para DATETIME.")
 
                 # 🚀 Se todos os valores são numéricos, converter para INT
-                elif pd.to_numeric(valores_validos, errors="coerce").notna().all():
+                elif valores_validos.apply(lambda x: str(x).replace(".", "").isdigit()).all():
                     self.df[col] = pd.to_numeric(self.df[col], errors="coerce").fillna(0).astype(int)
                     print(f"✅ Coluna '{col}' convertida para INT.")
 
-                # 🚀 Caso contrário, converter para STRING
+                # 🚀 Se há mistura de números e texto, converter para STRING
                 else:
                     self.df[col] = self.df[col].astype(str)
                     print(f"🔤 Coluna '{col}' convertida para STRING.")

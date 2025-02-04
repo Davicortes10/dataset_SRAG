@@ -39,8 +39,8 @@ class Oficial:
             bot = Normalizacao(self.df)
             dados_faltantes = Dados_Faltantes(self.df)  # Agora pode ser inicializado corretamente
             self.df = self.tratar_dados_faltantes(dados_faltantes)
-            self.df = self.pre_processamento()
             self.df = bot.normalizar_sexo_sinto(self.df)
+            self.df = self.pre_processamento()
 
     def tratar_dados_faltantes(self, dados):
         """
