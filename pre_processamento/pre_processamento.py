@@ -14,8 +14,9 @@ class PreprocessDataset:
     def converter_tipos_colunas(self):
         """
         Converte automaticamente as colunas do DataFrame para os tipos apropriados:
-        
+
         - Se o nome da coluna contiver "DT", converte para DATETIME.
+        - Se a coluna for 'NU_IDADE_N', converte para INT.
         - Se todos os valores forem numéricos, converte para INT.
         - Se houver mistura de números e texto, converte para STRING.
         - Nenhuma coluna permanecerá com o tipo OBJECT.
@@ -42,6 +43,11 @@ class PreprocessDataset:
                     self.df[col] = pd.to_datetime(self.df[col], errors="coerce", dayfirst=True)
                     print(f"📅 Coluna '{col}' convertida para DATETIME.")
 
+                # 🚀 Se a coluna for 'NU_IDADE_N', converter para INT
+                elif col == "NU_IDADE_N":
+                    self.df[col] = pd.to_numeric(self.df[col], errors="coerce").fillna(0).astype(int)
+                    print(f"✅ Coluna '{col}' convertida para INT.")
+
                 # 🚀 Se todos os valores são numéricos, converter para INT
                 elif valores_validos.apply(lambda x: str(x).replace(".", "").isdigit()).all():
                     self.df[col] = pd.to_numeric(self.df[col], errors="coerce").fillna(0).astype(int)
@@ -59,6 +65,7 @@ class PreprocessDataset:
         except Exception as e:
             print(f"❌ Erro ao converter tipos: {str(e)}")
             return self.df
+
 
 
 
