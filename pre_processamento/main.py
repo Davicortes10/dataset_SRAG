@@ -59,7 +59,7 @@ class Oficial:
     
     def pre_processamento(self):
         pre = PreprocessDataset(self.df)
-        self.df = pre.converter_tipos_colunas(self.df)
+        self.df = pre.converter_tipos_colunas()
         return self.df
     
     def outliers(self):
@@ -112,7 +112,7 @@ class Oficial:
 
 # Criando uma instância da classe Oficial e executando o pipeline corretamente
 bot = Oficial()
-bot.data_lake()
+#bot.data_lake()
 bot.ler_dataset()  # Primeiro, carrega os dados do banco
 bot.outliers()
 bot.normalizacao()

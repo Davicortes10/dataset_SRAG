@@ -9,7 +9,7 @@ import numpy as np
 
 class PreprocessDataset:
     def __init__(self, df):
-        self.self.df = df
+        self.df = df
 
     def converter_tipos_colunas(self):
         """
