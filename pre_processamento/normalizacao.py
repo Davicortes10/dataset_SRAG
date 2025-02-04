@@ -76,25 +76,25 @@ class Normalizacao:
         Normaliza as colunas 'CS_SEXO' e 'FATOR_RISC' no DataFrame.
 
         Regras:
-        - 'CS_SEXO': Substitui 'M' por 1 e 'F' por 2.
-        - 'FATOR_RISC': Substitui 'S' por 1 e 'N' por 2.
+        - 'CS_SEXO': Substitui 'M' por 1 e 'F' por 2 e converte para INT.
+        - 'FATOR_RISC': Substitui 'S' por 1 e 'N' por 2 e converte para INT.
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame Pandas contendo as colunas a serem normalizadas.
 
         Retorna:
         - pd.DataFrame: DataFrame atualizado com os valores normalizados.
-        """  
+        """
 
-        # 📌 Normalizar a coluna CS_SEXO
+        # 📌 Normalizar a coluna CS_SEXO e converter para int
         if "CS_SEXO" in df.columns:
-            df["CS_SEXO"] = df["CS_SEXO"].replace({"M": 1, "F": 2})
-            print("✅ Coluna 'CS_SEXO' normalizada (M → 1, F → 2).")
+            df["CS_SEXO"] = df["CS_SEXO"].replace({"M": 1, "F": 2}).astype("Int64")
+            print("✅ Coluna 'CS_SEXO' normalizada (M → 1, F → 2) e convertida para INT.")
 
-        # 📌 Normalizar a coluna FATOR_RISC
+        # 📌 Normalizar a coluna FATOR_RISC e converter para int
         if "FATOR_RISC" in df.columns:
-            df["FATOR_RISC"] = df["FATOR_RISC"].replace({"S": 1, "N": 2})
-            print("✅ Coluna 'FATOR_RISC' normalizada (S → 1, N → 2).")
+            df["FATOR_RISC"] = df["FATOR_RISC"].replace({"S": 1, "N": 2}).astype("Int64")
+            print("✅ Coluna 'FATOR_RISC' normalizada (S → 1, N → 2) e convertida para INT.")
 
         return df
 
