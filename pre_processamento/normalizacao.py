@@ -71,6 +71,33 @@ class Normalizacao:
         print("✅ Classificação de idade concluída!")
         return df
     
+    def normalizar_sexo_sinto(self, df):
+        """
+        Normaliza as colunas 'CS_SEXO' e 'FATOR_RISC' no DataFrame.
+
+        Regras:
+        - 'CS_SEXO': Substitui 'M' por 1 e 'F' por 2.
+        - 'FATOR_RISC': Substitui 'S' por 1 e 'N' por 2.
+
+        Parâmetros:
+        - df (pd.DataFrame): DataFrame Pandas contendo as colunas a serem normalizadas.
+
+        Retorna:
+        - pd.DataFrame: DataFrame atualizado com os valores normalizados.
+        """  
+
+        # 📌 Normalizar a coluna CS_SEXO
+        if "CS_SEXO" in df.columns:
+            df["CS_SEXO"] = df["CS_SEXO"].replace({"M": 1, "F": 2})
+            print("✅ Coluna 'CS_SEXO' normalizada (M → 1, F → 2).")
+
+        # 📌 Normalizar a coluna FATOR_RISC
+        if "FATOR_RISC" in df.columns:
+            df["FATOR_RISC"] = df["FATOR_RISC"].replace({"S": 1, "N": 2})
+            print("✅ Coluna 'FATOR_RISC' normalizada (S → 1, N → 2).")
+
+        return df
+
     def executar_normalizacao(self):
         self.df = self.contar_sintomas_fatores()
         self.df = self.classificar_idade(self.df)

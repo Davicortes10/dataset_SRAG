@@ -117,14 +117,6 @@ class Outliers:
         # 📌 Lista de colunas que não devem ser alteradas
         colunas_ignoradas = ["CS_SEXO", "CS_ZONA", "OUTRO_DES", "OUT_AMOST", "MORB_DESC", "FATOR_RISC"]
 
-        # 📌 Normalizar a coluna CS_SEXO (substituir 'M' → 1 e 'F' → 2)
-        if "CS_SEXO" in self.df.columns:
-            self.df["CS_SEXO"] = self.df["CS_SEXO"].replace({"M": 1, "F": 2})
-        
-        # 📌 Normalizar a coluna FATOR_RISC (substituir 'S' → 1 e 'N' → 2)
-        if "FATOR_RISC" in self.df.columns:
-            self.df["FATOR_RISC"] = self.df["FATOR_RISC"].replace({"S": 1, "N": 2})
-
         # 📌 Remover outliers em colunas de idade
         for col in self.df.select_dtypes(include=[np.number]).columns:
             if "idade" in col.lower() and col not in colunas_ignoradas:

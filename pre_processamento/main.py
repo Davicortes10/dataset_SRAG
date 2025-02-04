@@ -36,9 +36,11 @@ class Oficial:
             print("❌ Erro: O dataset não foi carregado corretamente!")
         else:
             print("✅ Dataset carregado com sucesso!")
+            bot = Normalizacao(self.df)
             dados_faltantes = Dados_Faltantes(self.df)  # Agora pode ser inicializado corretamente
             self.df = self.tratar_dados_faltantes(dados_faltantes)
             self.df = self.pre_processamento()
+            self.df = bot.normalizar_sexo_sinto(self.df)
 
     def tratar_dados_faltantes(self, dados):
         """
@@ -115,6 +117,8 @@ bot.ler_dataset()  # Primeiro, carrega os dados do banco
 bot.outliers()
 bot.normalizacao()
 bot.enviar_para_gcp(bot.df)
+
+
 
 
 

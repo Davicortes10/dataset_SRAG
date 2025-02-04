@@ -9,7 +9,6 @@ class GCP_Dataset:
     def __init__(self):
         self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.170.252.6/srag_datalake"
         self.conn = create_engine(self.gcp_db_connection)
-        self.df = self.ler_gcp_DB()
     
     def ler_gcp_DB(self):
         """
