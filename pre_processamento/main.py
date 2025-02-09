@@ -1,10 +1,11 @@
 from pre_processamento import PreprocessDataset
 from data_lake import Data_Lake
 from dados_faltantes import Dados_Faltantes
-from gcp_dataset import GCP_Dataset
+from dataset_SRAG.pre_processamento.gcp_dataset_datalake import GCP_Dataset
 from pre_processamento import PreprocessDataset
 from outliers import Outliers
 from normalizacao import Normalizacao
+from classificacao import Classificacao
 from sqlalchemy import create_engine
 
 class Oficial:
@@ -71,6 +72,11 @@ class Oficial:
         bot = Normalizacao(self.df)
         self.df = bot.executar_normalizacao()
         self.df = self.pre_processamento()
+    
+    def classificacao(self):
+        bot = Classificacao(self.df)
+        self.df = bot.classificar_pacientes()
+        self.df = self.pre_processamento()
 
     def enviar_para_gcp(self, df, if_exists="append", batch_size=10000):
         """
@@ -112,6 +118,7 @@ class Oficial:
         self.ler_dataset()
         self.outliers()
         self.normalizacao()
+        self.classificacao()
         self.enviar_para_gcp(self.df)
     
 
