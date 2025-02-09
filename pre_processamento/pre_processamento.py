@@ -4,7 +4,6 @@ import pandas as pd
 import pymysql
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType, StructField, StructType
-import numpy as np
 
 
 class PreprocessDataset:
