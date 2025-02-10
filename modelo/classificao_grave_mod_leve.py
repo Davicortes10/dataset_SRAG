@@ -5,17 +5,21 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from tensorflow.keras.utils import to_categorical
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-class Classficacao_Grave_Mod_Leve:
+
+
+
+class Classficacao_Modelos:
     def __init__(self, df):
         self.dataset = df
     
-    def classicacao(self):
+    def classicacao_leve_mod_grave(self):
         # Selecionando apenas as colunas relevantes
         colunas_relevantes = [
             # 📌 Informações básicas
@@ -80,6 +84,71 @@ class Classficacao_Grave_Mod_Leve:
         plt.ylabel("Real")
         plt.title("Matriz de Confusão")
         plt.show()
+
+    def classificacao_evolucao(self):
+        # Passo 1: Tratamento dos Dados
+        # Remover registros com EVOLUCAO = 9 (Ignorado)
+        dataset_filtrado = self.dataset[self.dataset['EVOLUCAO'] != 9]
+
+        # Passo 2: Pré-processamento dos Dados
+        # Normalização das variáveis numéricas
+        scaler = StandardScaler()
+        X = scaler.fit_transform(dataset_filtrado[['NU_IDADE_N', 'QTD_FATOR_RISC', 'QTD_SINT']])
+
+        # Codificação one-hot da variável target
+        y = to_categorical(dataset_filtrado['EVOLUCAO'] - 1)  # Subtrair 1 para ajustar os índices (1 -> 0, 2 -> 1, 3 -> 2)
+
+        # Passo 3: Divisão dos Dados
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Passo 4: Construção da Rede Neural
+        model = Sequential([
+            Dense(64, activation='relu', input_shape=(X_train.shape[1],)),  # Camada oculta 1
+            Dense(32, activation='relu'),  # Camada oculta 2
+            Dense(3, activation='softmax')  # Camada de saída (3 classes: Melhora, Óbito, Óbito por outras causas)
+        ])
+
+        # Compilação do Modelo
+        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+        # Callback para parar o treinamento se não houver melhoria
+        early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+        # Passo 5: Treinamento do Modelo
+        history = model.fit(
+            X_train, y_train,
+            epochs=100,  # Número máximo de épocas
+            batch_size=32,
+            validation_split=0.2,
+            callbacks=[early_stopping],
+            verbose=1
+        )
+
+        # Passo 6: Avaliação do Modelo
+        y_pred = model.predict(X_test)
+        y_pred_classes = np.argmax(y_pred, axis=1)
+        y_test_classes = np.argmax(y_test, axis=1)
+
+        # Métricas de Avaliação
+        print("Acurácia:", accuracy_score(y_test_classes, y_pred_classes))
+        print("\nRelatório de Classificação:\n", classification_report(
+            y_test_classes, y_pred_classes,
+            target_names=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS']
+        ))
+
+        # Passo 7: Implementação (Previsão para Novos Pacientes)
+        novo_paciente = np.array([[65, 2, 3]])  # Exemplo: Paciente de 65 anos, 2 comorbidades, 3 sintomas
+        novo_paciente_scaled = scaler.transform(novo_paciente)
+        previsao = model.predict(novo_paciente_scaled)
+        previsao_classe = np.argmax(previsao, axis=1)
+
+        print("\nPrevisão para o Novo Paciente:")
+        if previsao_classe == 0:
+            print("Melhora de Quadro")
+        elif previsao_classe == 1:
+            print("Óbito")
+        else:
+            print("Óbito por Outras Causas")
 
 
 '''
