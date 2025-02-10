@@ -1,11 +1,10 @@
-from pre_processamento import PreprocessDataset
-from data_lake import Data_Lake
-from dados_faltantes import Dados_Faltantes
-from gcp_dataset_datalake import GCP_Dataset
-from pre_processamento import PreprocessDataset
-from outliers import Outliers
-from normalizacao import Normalizacao
-from classificacao import Classificacao
+from pre_processamento.conversao_coluna import PreprocessDataset
+from pre_processamento.data_lake import Data_Lake
+from pre_processamento.dados_faltantes import Dados_Faltantes
+from pre_processamento.gcp_dataset_datalake import GCP_Dataset
+from pre_processamento.outliers import Outliers
+from pre_processamento.normalizacao import Normalizacao
+from pre_processamento.classificacao import Classificacao
 from sqlalchemy import create_engine
 
 class Oficial:
