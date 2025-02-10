@@ -4,68 +4,68 @@ import pandas as pd
 import pymysql
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType, StructField, StructType
-import numpy as np
 
 
 class PreprocessDataset:
     def __init__(self, df):
         self.df = df
-    
-    def converter_tipos_colunas(self, df):
+
+    def converter_tipos_colunas(self):
         """
         Converte automaticamente as colunas do DataFrame para os tipos apropriados:
 
+        - Se o nome da coluna contiver "DT", converte para DATETIME.
+        - Se a coluna for 'NU_IDADE_N', converte para INT.
         - Se todos os valores forem numéricos, converte para INT.
-        - Se a maioria dos valores estiver no formato de data, converte para DATETIME.
-        - Caso contrário, converte para STRING.
+        - Se houver mistura de números e texto, converte para STRING.
+        - Nenhuma coluna permanecerá com o tipo OBJECT.
 
         Parâmetros:
-        - df (pd.DataFrame): O DataFrame a ser processado.
+        - self.df (pd.DataFrame): O DataFrame a ser processado.
 
         Retorna:
         - pd.DataFrame: O DataFrame atualizado com os tipos de colunas convertidos.
         """
-
         try:
-            # 🚀 Criar uma cópia do DataFrame para evitar modificar o original
-            df = df.copy()
-
             print("🔄 Iniciando conversão automática de tipos...\n")
 
-            for col in df.columns:
-                # Remover NaNs temporariamente para evitar interferência na análise de tipo
-                valores_validos = df[col].dropna()
+            for col in self.df.columns:
+                # Remover valores nulos temporariamente para análise
+                valores_validos = self.df[col].dropna()
 
                 if valores_validos.empty:
                     print(f"⚠️ Coluna '{col}' vazia. Mantendo como está.")
                     continue
 
-                # 🚀 Tentar converter para número inteiro
-                if pd.to_numeric(valores_validos, errors='coerce').notna().all():
-                    df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
-                    print(f"✅ Coluna '{col}' convertida para INT.")
-
-                # 🚀 Tentar converter para datetime
-                elif pd.to_datetime(valores_validos, format="%d/%m/%Y", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
-                    df[col] = pd.to_datetime(df[col], format="%d/%m/%Y", errors='coerce')
+                # 🚀 Se o nome da coluna contém 'DT', forçar conversão para DATETIME
+                if "DT" in col.upper():
+                    self.df[col] = pd.to_datetime(self.df[col], errors="coerce", dayfirst=True)
                     print(f"📅 Coluna '{col}' convertida para DATETIME.")
 
-                elif pd.to_datetime(valores_validos, format="%Y-%m-%d", errors='coerce').notna().sum() > (len(valores_validos) * 0.8):
-                    df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce')
-                    print(f"📅 Coluna '{col}' convertida para DATETIME (Formato AAAA-MM-DD).")
+                # 🚀 Se a coluna for 'NU_IDADE_N', converter para INT
+                elif col == "NU_IDADE_N":
+                    self.df[col] = pd.to_numeric(self.df[col], errors="coerce").fillna(0).astype(int)
+                    print(f"✅ Coluna '{col}' convertida para INT.")
 
-                # 🚀 Caso contrário, converter para string
+                # 🚀 Se todos os valores são numéricos, converter para INT
+                elif valores_validos.apply(lambda x: str(x).replace(".", "").isdigit()).all():
+                    self.df[col] = pd.to_numeric(self.df[col], errors="coerce").fillna(0).astype(int)
+                    print(f"✅ Coluna '{col}' convertida para INT.")
+
+                # 🚀 Se há mistura de números e texto, converter para STRING
                 else:
-                    df[col] = df[col].astype(str)
+                    self.df[col] = self.df[col].astype(str)
                     print(f"🔤 Coluna '{col}' convertida para STRING.")
 
             print("\n✅ Conversão de tipos concluída!")
-            print(df.info())
-            return df
+            print(self.df.info())
+            return self.df
 
         except Exception as e:
             print(f"❌ Erro ao converter tipos: {str(e)}")
-            return df
+            return self.df
+
+
 
 
 

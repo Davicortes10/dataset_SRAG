@@ -1,21 +1,11 @@
-# Bancos de dados
-PyMySQL
-SQLAlchemy
-
-# Big Data & Processamento de Dados
+pymysql
+sqlalchemy
 pyspark
 pandas
 numpy
-
-# Armazenamento em Nuvem (Google Cloud)
 gcsfs
-
-# Web Scraping & Automação de Navegador
 playwright
-
-# Tempo & Data
-datetime
-
-# Utilitários do sistema
-os
-time
+tensorflow
+scikit-learn
+matplotlib
+seaborn

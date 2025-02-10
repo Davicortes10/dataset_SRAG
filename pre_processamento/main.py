@@ -1,10 +1,11 @@
 from pre_processamento import PreprocessDataset
 from data_lake import Data_Lake
 from dados_faltantes import Dados_Faltantes
-from gcp_dataset import GCP_Dataset
+from gcp_dataset_datalake import GCP_Dataset
 from pre_processamento import PreprocessDataset
 from outliers import Outliers
 from normalizacao import Normalizacao
+from classificacao import Classificacao
 from sqlalchemy import create_engine
 
 class Oficial:
@@ -36,8 +37,10 @@ class Oficial:
             print("❌ Erro: O dataset não foi carregado corretamente!")
         else:
             print("✅ Dataset carregado com sucesso!")
+            bot = Normalizacao(self.df)
             dados_faltantes = Dados_Faltantes(self.df)  # Agora pode ser inicializado corretamente
             self.df = self.tratar_dados_faltantes(dados_faltantes)
+            self.df = bot.normalizar_sexo_sinto(self.df)
             self.df = self.pre_processamento()
 
     def tratar_dados_faltantes(self, dados):
@@ -57,29 +60,32 @@ class Oficial:
     
     def pre_processamento(self):
         pre = PreprocessDataset(self.df)
-        self.df = pre.converter_tipos_colunas(self.df)
+        self.df = pre.converter_tipos_colunas()
         return self.df
     
     def outliers(self):
         oute = Outliers(self.df)
         self.df = oute.executar_outliers()
+        self.df = self.pre_processamento()
     
     def normalizacao(self):
         bot = Normalizacao(self.df)
         self.df = bot.executar_normalizacao()
+        self.df = self.pre_processamento()
     
-    def enviar_para_gcp(self,df,  if_exists="replace"):
+    def classificacao(self):
+        bot = Classificacao(self.df)
+        self.df = bot.classificar_pacientes()
+        self.df = self.pre_processamento()
+
+    def enviar_para_gcp(self, df, if_exists="append", batch_size=10000):
         """
-        Envia um DataFrame Pandas para uma tabela MySQL no Google Cloud (GCP) sem dividir em chunks.
+        Envia um DataFrame Pandas para uma tabela MySQL no Google Cloud (GCP) usando chunks para evitar consumo excessivo de memória.
 
         Parâmetros:
         - df (pd.DataFrame): DataFrame a ser enviado para o banco de dados.
-        - host (str): Endereço IP do banco de dados MySQL no GCP (exemplo: "34.170.252.6").
-        - user (str): Nome de usuário do MySQL.
-        - password (str): Senha do banco de dados.
-        - database (str): Nome do banco de dados no GCP.
-        - tabela (str): Nome da tabela onde os dados serão armazenados.
-        - if_exists (str): Opção de escrita na tabela ('fail', 'replace', 'append'). Padrão: 'append'.
+        - if_exists (str): Opção de escrita na tabela ('fail', 'append', 'append'). Padrão: 'append'.
+        - batch_size (int): Tamanho do chunk para inserção dos dados (padrão: 10.000 linhas por batch).
 
         Retorna:
         - None
@@ -88,18 +94,32 @@ class Oficial:
         try:
             # Criar a conexão com o banco de dados
             print("🔗 Conectando ao banco de dados GCP MySQL...")
-            engine = create_engine(f"mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
+            engine = create_engine("mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
 
-            # Enviar os dados para o banco sem dividir em chunks
-            print(f"📤 Enviando {len(df)} registros para a tabela 'srag_warehouse'...")
+            total_linhas = len(df)
+            print(f"📤 Enviando {total_linhas} registros para a tabela 'srag_warehouse' em chunks de {batch_size} linhas...")
 
-            df.to_sql("srag_warehouse", con=engine, if_exists=if_exists, index=False, method="multi")
+            # Dividir a inserção em chunks para evitar sobrecarga de memória
+            for i, chunk in enumerate(range(0, total_linhas, batch_size)):
+                df_chunk = df.iloc[chunk : chunk + batch_size]  # Pegando um pedaço do DataFrame
 
-            print(f"✅ Upload concluído com sucesso na tabela 'srag_warehouse'!")
+                # Enviando para o banco
+                df_chunk.to_sql("srag_warehouse", con=engine, if_exists=if_exists, index=False, method="multi")
+
+                print(f"✅ Chunk {i+1}: Inseriu {len(df_chunk)} registros (de {chunk} até {chunk+len(df_chunk)-1}).")
+
+            print(f"\n🎉 Upload concluído com sucesso! Total de {total_linhas} registros inseridos.")
 
         except Exception as e:
             print(f"❌ Erro ao enviar dados para o banco GCP: {str(e)}")
-    
+
+    def executar_classe(self):
+        self.data_lake()
+        self.ler_dataset()
+        self.outliers()
+        self.normalizacao()
+        self.classificacao()
+        self.enviar_para_gcp(self.df)
     
 
 
@@ -108,11 +128,8 @@ class Oficial:
 
 # Criando uma instância da classe Oficial e executando o pipeline corretamente
 bot = Oficial()
-bot.data_lake()
-bot.ler_dataset()  # Primeiro, carrega os dados do banco
-bot.outliers()
-bot.normalizacao()
-bot.enviar_para_gcp(bot.df)
+bot.executar_classe()
+
 
 
 

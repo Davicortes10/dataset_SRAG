@@ -7,9 +7,8 @@ import numpy as np
 
 class GCP_Dataset:
     def __init__(self):
-        self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.170.252.6/srag_datalake"
+        self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse"
         self.conn = create_engine(self.gcp_db_connection)
-        self.df = self.ler_gcp_DB()
     
     def ler_gcp_DB(self):
         """
@@ -34,7 +33,7 @@ class GCP_Dataset:
 
         try:
             # 🚀 Definir a consulta SQL
-            query = "SELECT * FROM srag_datalake"
+            query = "SELECT * FROM srag_warehouse"
             print("🔍 Executando consulta no banco de dados...")
 
             # 🚀 Ativar exibição de todas as colunas no Pandas
@@ -45,7 +44,7 @@ class GCP_Dataset:
 
             # 🚀 Verificação: DataFrame vazio
             if df.empty:
-                print("⚠️ A tabela 'srag_datalake' está vazia!")
+                print("⚠️ A tabela 'srag_warehouse' está vazia!")
                 return df
 
             # 🔍 Exibir informações iniciais sobre os dados
