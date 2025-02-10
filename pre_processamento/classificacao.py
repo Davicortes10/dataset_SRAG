@@ -5,7 +5,7 @@ class Classificacao:
         self.df = df
 
     def classificar_pacientes(self):
-        """]teste
+        """
         Classifica os pacientes com Síndrome Respiratória Aguda Grave (SRAG) em LEVE, MODERADO ou GRAVE 
         com base em sintomas, fatores de risco e idade.
 
