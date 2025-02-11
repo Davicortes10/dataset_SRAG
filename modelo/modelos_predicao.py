@@ -191,6 +191,109 @@ class Classficacao_Modelos:
             print("Óbito")
         else:
             print("Óbito por Outras Causas")
+    
+    def calcular_taxa_mortalidade(self):
+        """
+        Calcula a taxa de mortalidade para cada localidade.
+        """
+        self.data["Taxa de Mortalidade"] = (self.data["Óbitos"] / self.data["Casos Confirmados"]) * 100
+        print("✅ Taxa de mortalidade calculada!")
+        
+    def visualizar_mortalidade(self):
+        """
+        Gera um gráfico de barras da taxa de mortalidade por localidade.
+        """
+        mortalidade_por_localidade = self.data.groupby("Localidade")["Taxa de Mortalidade"].mean().reset_index()
+        
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x="Localidade", y="Taxa de Mortalidade", data=mortalidade_por_localidade)
+        plt.title("Taxa de Mortalidade por Localidade")
+        plt.xticks(rotation=45)
+        plt.show()
+
+    def preprocessar_dados(self):
+        """
+        Realiza o pré-processamento dos dados:
+        - Converte variáveis categóricas para numéricas
+        - Remove colunas desnecessárias
+        - Normaliza os dados numéricos
+        """
+        print("🔄 Iniciando pré-processamento dos dados...")
+
+        # Converter variáveis categóricas
+        self.data = pd.get_dummies(self.data, columns=["Sexo", "Etnia/Raça", "Localidade"], drop_first=True)
+        
+        # Definir variáveis preditoras e alvo
+        self.X = self.data.drop(["Taxa de Mortalidade", "Óbitos", "Casos Confirmados"], axis=1)
+        self.y = self.data["Taxa de Mortalidade"]
+        
+        # Normalizar os dados numéricos
+        scaler = StandardScaler()
+        self.X_scaled = scaler.fit_transform(self.X)
+
+        # Dividir o dataset em treino e teste
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.X_scaled, self.y, test_size=0.2, random_state=42
+        )
+
+        print("✅ Dados pré-processados com sucesso!")
+
+    def treinar_modelo_regressao_linear(self):
+        """
+        Treina um modelo de regressão linear para prever a taxa de mortalidade.
+        """
+        print("🚀 Treinando modelo de Regressão Linear...")
+
+        self.model_lr = LinearRegression()
+        self.model_lr.fit(self.X_train, self.y_train)
+        
+        y_pred = self.model_lr.predict(self.X_test)
+        mse = mean_squared_error(self.y_test, y_pred)
+        r2 = r2_score(self.y_test, y_pred)
+
+        print(f"📊 Erro Quadrático Médio (MSE - Regressão Linear): {mse}")
+        print(f"📈 Coeficiente de Determinação (R² - Regressão Linear): {r2}")
+
+    def treinar_modelo_random_forest(self):
+        """
+        Treina um modelo de Random Forest para prever a taxa de mortalidade.
+        """
+        print("🚀 Treinando modelo de Random Forest...")
+
+        self.model_rf = RandomForestRegressor(random_state=42)
+        self.model_rf.fit(self.X_train, self.y_train)
+        
+        y_pred_rf = self.model_rf.predict(self.X_test)
+        mse_rf = mean_squared_error(self.y_test, y_pred_rf)
+        r2_rf = r2_score(self.y_test, y_pred_rf)
+
+        print(f"📊 Erro Quadrático Médio (MSE - Random Forest): {mse_rf}")
+        print(f"📈 Coeficiente de Determinação (R² - Random Forest): {r2_rf}")
+
+        # Exibir importância das variáveis
+        importancias = self.model_rf.feature_importances_
+        feature_names = self.X.columns
+        importancias_df = pd.DataFrame({'Variável': feature_names, 'Importância': importancias})
+        importancias_df = importancias_df.sort_values(by='Importância', ascending=False)
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x='Importância', y='Variável', data=importancias_df)
+        plt.title('Importância das Variáveis no Modelo de Random Forest')
+        plt.show()
+
+    def visualizar_predicoes(self):
+        """
+        Gera um gráfico comparando valores reais e previstos pelo modelo de Random Forest.
+        """
+        y_pred_rf = self.model_rf.predict(self.X_test)
+
+        plt.figure(figsize=(10, 6))
+        plt.scatter(self.y_test, y_pred_rf, alpha=0.5)
+        plt.plot([self.y_test.min(), self.y_test.max()], [self.y_test.min(), self.y_test.max()], 'k--', lw=2)
+        plt.xlabel("Valores Reais")
+        plt.ylabel("Valores Previstos")
+        plt.title("Valores Reais vs. Previstos (Random Forest)")
+        plt.show()
 
 
 
