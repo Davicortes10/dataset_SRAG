@@ -197,7 +197,7 @@ class Dados_Faltantes:
             # 🔍 Identificar colunas que começam com os padrões especificados
             padroes_exclusao = (
                 "TP_", "SEM_", "COD_", "CO_", "SURTO_", "PAIS_", "LO_", "HISTO_", 
-                "DT_ENTUTI", "DT_SAIDUTI", "DT_TOMO", "DT_RAIOX", "DT_PCR", "DT_EVOLUCA", 
+                "DT_ENTUTI", "DT_SAIDUTI", "DT_TOMO", "DT_RAIOX", "DT_PCR", 
                 "DT_ANTIVIR", "TP_AMOSTRA", "DT_COLETA", "TP_ANTIVIR", "TP_TES_AN", 
                 "DT_CO_SOR", "DT_UT_DOSE", "TP_SOR", "DT_RES", "RAIOX_RES", "DT_NASC", "CRITERIO", "ID_UNIDADE"
             )
