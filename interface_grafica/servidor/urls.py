@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from API.views import armazenar_dados, obter_dados
+from API.views import armazenar_dados,enviar_dados
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/armazenar_dados/', armazenar_dados, name='armazenar_dados'),  # URL para POST dos dados
-    path('api/obter_dados/', obter_dados, name='obter_dados'),  # URL para GET dos dados
+    path('api/obter_dados/', enviar_dados, name='obter_dados'),  # URL para GET dos dados
 ]

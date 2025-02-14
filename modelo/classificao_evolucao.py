@@ -1,21 +1,21 @@
 import numpy as np
-import pandas as pd
-import tensorflow as tf
+import requests
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.callbacks import EarlyStopping
+
 from tensorflow.keras.utils import to_categorical
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.metrics import classification_report,confusion_matrix, accuracy_score
+
 
 
 class ClassificacaoEvolucao:
     def __init__(self, dataset):
         self.dataset = dataset
         self.scaler = StandardScaler()
+        self.dados = ()
 
     def filtrar_dados(self):
         """Remove registros com EVOLUCAO = 9 (Ignorado)."""
@@ -63,19 +63,37 @@ class ClassificacaoEvolucao:
             y_test_classes, y_pred_classes,
             target_names=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS']
         ))
-
-        # Exibir matriz de confusão
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(
-            confusion_matrix(y_test_classes, y_pred_classes),
-            annot=True, fmt="d", cmap="Blues",
-            xticklabels=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS'],
-            yticklabels=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS']
+        # Calcular métricas
+        acuracia = accuracy_score(y_test_classes, y_pred_classes)
+        relatorio_classificacao = classification_report(
+            y_test_classes,
+            y_pred_classes,
+            target_names=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS'],
+            output_dict=True  # Para obter o relatório como um dicionário
         )
-        plt.xlabel("Predito")
-        plt.ylabel("Real")
-        plt.title("Matriz de Confusão - Evolução do Paciente")
-        plt.show()
+        matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
+        self.enviar_dados({
+            "acuracia": acuracia,
+            "relatorio_classificacao": relatorio_classificacao,
+            "matriz_confusao": matriz_confusao
+        })
+
+    def enviar_dados(self,dados):
+        """Envia as métricas para o endpoint Django."""
+        url = "https://7c96-186-216-47-142.ngrok-free.app/api/armazenar_dados/"  # Substitua pela URL do seu endpoint
+        try:
+            response = requests.post(url, json=dados)
+            if response.status_code == 200:
+                print("Dados enviados com sucesso!")
+                print("Resposta do servidor:", response.json())
+            else:
+                print(f"Erro ao enviar dados. Status code: {response.status_code}")
+                print("Resposta:", response.text)
+        except Exception as e:
+            print("Erro ao enviar os dados:", e)
+
+
+
 
     def executar_classificacao(self):
         """Executa todo o pipeline de classificação da evolução do paciente."""
