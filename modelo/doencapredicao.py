@@ -22,10 +22,9 @@ class DoencaPredictor:
         - visualizar_resultados(): Plota gráficos de desempenho do modelo.
     """
 
-    def __init__(self, dataset_path):
+    def __init__(self, df):
         """Inicializa os atributos da classe."""
-        self.dataset_path = dataset_path
-        self.df = None
+        self.df = df
         self.X = None
         self.y = None
         self.label_encoder = LabelEncoder()
@@ -33,19 +32,29 @@ class DoencaPredictor:
         self.model = None
         self.history = None
 
-    def carregar_dados(self):
+    def carregar_dados(self, df):
         """
-        Carrega um dataset real contendo sintomas, comorbidades e classificação final da SRAG.
+        Processa um dataset real contendo sintomas, comorbidades e classificação final da SRAG.
 
-        - Mantém apenas os casos de Influenza (1) e COVID-19 (5) na coluna CLASSI_FIN.
-        - Remove valores nulos e inconsistências.
+        Parâmetros:
+            - df (pd.DataFrame): DataFrame contendo os dados carregados previamente.
+
+        Etapas:
+            - Mantém apenas os casos de Influenza (1) e COVID-19 (5) na coluna CLASSI_FIN.
+            - Remove valores nulos e inconsistências.
+            - Renomeia CLASSI_FIN para "Doenca".
         """
-        # Carregar dataset com sintomas e comorbidades
-        self.df = pd.read_csv(self.dataset_path, usecols=[
-            "FEBRE", "TOSSE", "FADIGA", "DOR_ABD", "DISPNEIA", "SATURACAO", "VOMITO", "DIARREIA", "PERD_PALA","PERD_OLFT", "DESC_RESP", "GARGANTA"
+
+        # Seleciona apenas as colunas relevantes
+        colunas_necessarias = [
+            "FEBRE", "TOSSE", "FADIGA", "DOR_ABD", "DISPNEIA", "SATURACAO", "VOMITO", "DIARREIA", 
+            "PERD_PALA", "PERD_OLFT", "DESC_RESP", "GARGANTA",
             "DIABETES", "OBESIDADE", "CARDIOPATI", "RENAL", "HEPATICA", "IMUNODEPRE",
-            "CLASSI_FIN", "PUERPERA", "HEMATOLOGI", "SIND_DOWN", "ASMA", "NEUROLOGIC", "PNEUMOPATI"
-        ])
+            "PUERPERA", "HEMATOLOGI", "SIND_DOWN", "ASMA", "NEUROLOGIC", "PNEUMOPATI",
+            "CLASSI_FIN"
+        ]
+        
+        self.df = self.df[colunas_necessarias]
 
         # Remover valores nulos na coluna CLASSI_FIN
         self.df.dropna(subset=["CLASSI_FIN"], inplace=True)
@@ -53,11 +62,11 @@ class DoencaPredictor:
         # Filtrar apenas Influenza (1) e COVID-19 (5)
         self.df = self.df[self.df["CLASSI_FIN"].isin([1, 5])]
 
-        # Renomear CLASSI_FIN para "Doenca" e substituir valores
-        self.df["CLASSI_FIN"] = self.df["CLASSI_FIN"].replace({1: "Influenza", 5: "COVID-19"})
-        self.df.rename(columns={"CLASSI_FIN": "Doenca"}, inplace=True)
+        # Renomear CLASSI_FIN para "Doenca" e substituir valores numéricos por texto
+        self.df["Doenca"] = self.df["CLASSI_FIN"].replace({1: "Influenza", 5: "COVID-19"})
+        self.df.drop(columns=["CLASSI_FIN"], inplace=True)  # Remove a coluna original após a conversão
 
-        print("✅ Dados carregados com sucesso!")
+        print("✅ Dados processados com sucesso!")
 
     def preprocessar_dados(self):
         """
