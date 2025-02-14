@@ -77,32 +77,6 @@ class ClassificacaoEvolucao:
             callbacks=[early_stopping], verbose=1
         )
         return model
-
-    def avaliar_modelo(self, model, X_test, y_test):
-        """Avalia o modelo e exibe métricas de desempenho."""
-        y_pred = model.predict(X_test)
-        y_pred_classes = np.argmax(y_pred, axis=1)
-        y_test_classes = np.argmax(y_test, axis=1)
-
-        # Exibir métricas
-        print("Acurácia:", accuracy_score(y_test_classes, y_pred_classes))
-        print("\n🔍 Relatório de Classificação:\n", classification_report(
-            y_test_classes, y_pred_classes,
-            target_names=['MELHORA', 'ÓBITO']
-        ))
-
-        # Exibir matriz de confusão
-        plt.figure(figsize=(6, 4))
-        sns.heatmap(
-            confusion_matrix(y_test_classes, y_pred_classes),
-            annot=True, fmt="d", cmap="Blues",
-            xticklabels=['MELHORA', 'ÓBITO'],
-            yticklabels=['MELHORA', 'ÓBITO']
-        )
-        plt.xlabel("Predito")
-        plt.ylabel("Real")
-        plt.title("Matriz de Confusão - Evolução do Paciente")
-        plt.show()
     
     def avaliar_modelo(self, model, X_test, y_test):
         """Avalia o modelo e gera métricas de desempenho."""
@@ -177,7 +151,7 @@ class ClassificacaoEvolucao:
         model = self.criar_modelo(X_train.shape[1])
         model = self.treinar_modelo(model, X_train, y_train)
         self.avaliar_modelo(model, X_test, y_test)
-        self.visualizar_resultados()
+        #self.visualizar_resultados()
 
 
 
