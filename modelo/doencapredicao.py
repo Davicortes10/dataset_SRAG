@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
+
 
 class DoencaPredictor:
     """
@@ -32,12 +33,9 @@ class DoencaPredictor:
         self.model = None
         self.history = None
 
-    def carregar_dados(self, df):
+    def carregar_dados(self):
         """
         Processa um dataset real contendo sintomas, comorbidades e classificação final da SRAG.
-
-        Parâmetros:
-            - df (pd.DataFrame): DataFrame contendo os dados carregados previamente.
 
         Etapas:
             - Mantém apenas os casos de Influenza (1) e COVID-19 (5) na coluna CLASSI_FIN.
@@ -63,7 +61,7 @@ class DoencaPredictor:
         self.df = self.df[self.df["CLASSI_FIN"].isin([1, 5])]
 
         # Renomear CLASSI_FIN para "Doenca" e substituir valores numéricos por texto
-        self.df["Doenca"] = self.df["CLASSI_FIN"].replace({1: "Influenza", 5: "COVID-19"})
+        self.df["Doenca"] = self.df["CLASSI_FIN"].replace({1: "Influenza", 2: "outro vírus", 3: "outro agente etiológico", 5: "COVID-19"})
         self.df.drop(columns=["CLASSI_FIN"], inplace=True)  # Remove a coluna original após a conversão
 
         print("✅ Dados processados com sucesso!")
@@ -145,41 +143,36 @@ class DoencaPredictor:
         plt.title('Matriz de Confusão')
         plt.show()
 
-    def prever_doenca(self, sintomas):
-        """
-        Realiza uma previsão com base nos sintomas e comorbidades do paciente.
-
-        Parâmetros:
-            - sintomas (list): Lista binária com os sintomas (1 = presente, 0 = ausente).
-
-        Retorna:
-            - Nome da doença prevista e probabilidade.
-        """
-        sintomas_array = np.array([sintomas])  # Converter para numpy array
-        sintomas_scaled = self.scaler.transform(sintomas_array)  # Normalizar entrada
-
-        predicao = self.model.predict(sintomas_scaled)
-        doenca_prevista = self.label_encoder.inverse_transform([np.argmax(predicao)])
-
-        print(f"\n🔮 Previsão: {doenca_prevista[0]} (Confiança: {100*np.max(predicao):.2f}%)")
-
     def visualizar_resultados(self):
         """
-        Gera gráficos para visualizar a evolução do treinamento e a matriz de confusão.
+        Gera gráficos para visualizar a evolução do treinamento.
         """
-        # Evolução da Acurácia
-        plt.plot(self.history.history['accuracy'], label='Acurácia Treino')
-        plt.plot(self.history.history['val_accuracy'], label='Acurácia Validação')
-        plt.xlabel('Épocas')
-        plt.ylabel('Acurácia')
-        plt.legend()
-        plt.title('Evolução da Acurácia')
-        plt.show()
+        if self.history:
+            # Gráfico de perda
+            plt.figure(figsize=(6, 4))
+            plt.plot(self.history.history['loss'], label='Perda Treino')
+            plt.plot(self.history.history['val_loss'], label='Perda Validação')
+            plt.xlabel('Épocas')
+            plt.ylabel('Perda')
+            plt.legend()
+            plt.title('Evolução da Perda')
+            plt.show()
 
-# Exemplo de uso
-modelo = DoencaPredictor("seu_dataset.csv")  # Substitua pelo caminho correto do arquivo
+            # Gráfico de acurácia
+            plt.figure(figsize=(6, 4))
+            plt.plot(self.history.history['accuracy'], label='Acurácia Treino')
+            plt.plot(self.history.history['val_accuracy'], label='Acurácia Validação')
+            plt.xlabel('Épocas')
+            plt.ylabel('Acurácia')
+            plt.legend()
+            plt.title('Evolução da Acurácia')
+            plt.show()
+
+
+modelo = DoencaPredictor(dataset)
 modelo.carregar_dados()
 modelo.preprocessar_dados()
 modelo.construir_modelo()
 modelo.treinar_modelo()
 modelo.avaliar_modelo()
+modelo.visualizar_resultados()
