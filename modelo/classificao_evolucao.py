@@ -60,14 +60,14 @@ class ClassificacaoEvolucao:
         print("Acurácia:", accuracy_score(y_test_classes, y_pred_classes))
         print("\n🔍 Relatório de Classificação:\n", classification_report(
             y_test_classes, y_pred_classes,
-            target_names=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS']
+            target_names=['MELHORA DE QUADRO', 'ÓBITO']
         ))
         # Calcular métricas
         acuracia = accuracy_score(y_test_classes, y_pred_classes)
         relatorio_classificacao = classification_report(
             y_test_classes,
             y_pred_classes,
-            target_names=['MELHORA DE QUADRO', 'ÓBITO', 'ÓBITO POR OUTRAS CAUSAS'],
+            target_names=['MELHORA DE QUADRO', 'ÓBITO'],
             output_dict=True  # Para obter o relatório como um dicionário
         )
         matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
