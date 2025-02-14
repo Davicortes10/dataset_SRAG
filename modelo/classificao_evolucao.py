@@ -5,7 +5,6 @@ from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.callbacks import EarlyStopping
-
 from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import classification_report,confusion_matrix, accuracy_score
 
