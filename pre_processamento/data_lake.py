@@ -212,6 +212,26 @@ class Data_Lake:
 
         print("✅ Processo de atualização do Data Lake finalizado com sucesso!")
     
+    def excluir_arquivo(self, file_path):
+        """
+        Função para excluir um arquivo do sistema.
+
+        Parâmetros:
+        - file_path (str): Caminho completo do arquivo a ser excluído.
+
+        Retorno:
+        - None (apenas imprime mensagens de sucesso ou erro).
+        """
+
+        try:
+            if os.path.exists(file_path):  # Verifica se o arquivo existe
+                os.remove(file_path)
+                print(f"✅ Arquivo '{file_path}' excluído com sucesso.")
+            else:
+                print(f"⚠️ O arquivo '{file_path}' não existe.")
+        except Exception as e:
+            print(f"❌ Erro ao excluir o arquivo: {e}")
+    
     def executar_datalake(self):
         """
         Executa todo o pipeline do Data Lake, incluindo:
@@ -247,6 +267,7 @@ class Data_Lake:
             print("📊 Passo 2: Atualizando o Data Lake...")
             self.atualizar_Data_Lake()
             print("✅ Atualização do Data Lake concluída com sucesso!")
+            self.excluir_arquivo(self.caminho)
 
         except Exception as e:
             print(f"❌ Erro ao atualizar o Data Lake: {str(e)}")
