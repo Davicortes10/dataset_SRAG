@@ -93,7 +93,7 @@ class Oficial:
         try:
             # Criar a conexão com o banco de dados
             print("🔗 Conectando ao banco de dados GCP MySQL...")
-            engine = create_engine("mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse")
+            engine = create_engine("mysql+pymysql://devdavi:12345678@34.67.193.111/srag_warehouse")
 
             total_linhas = len(df)
             print(f"📤 Enviando {total_linhas} registros para a tabela 'srag_warehouse' em chunks de {batch_size} linhas...")
