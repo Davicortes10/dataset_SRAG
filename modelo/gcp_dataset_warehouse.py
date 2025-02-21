@@ -7,7 +7,7 @@ import numpy as np
 
 class GCP_Dataset:
     def __init__(self):
-        self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.170.252.6/srag_warehouse"
+        self.gcp_db_connection = "mysql+pymysql://devdavi:12345678@34.67.193.111/srag_warehouse"
         self.conn = create_engine(self.gcp_db_connection)
     
     def ler_gcp_DB(self):

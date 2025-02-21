@@ -13,7 +13,7 @@ class Data_Lake:
         self.file_path = "srag.csv"
         self.caminho = caminho
         self.db = db
-        self.db_connection = f"jdbc:mysql://34.170.252.6:3306/{self.db}"
+        self.db_connection = f"jdbc:mysql://34.67.193.111:3306/{self.db}"
         self.spark = SparkSession.builder \
             .appName("Atualizar Data Lake") \
             .config("spark.jars", "/usr/share/java/mysql-connector-java-8.0.33.jar") \

@@ -18,7 +18,7 @@ class Oficial:
 
     def __init__(self):
         self.df = None
-        self.bot_passo_1 = Data_Lake("/home/davicortes_oliveira1/dataset_SRAG/pre_processamento/srag.csv","srag_datalake")  # Inicializa sem valor 
+        self.bot_passo_1 = Data_Lake("/home/davicortes_oliveira1/dataset_SRAG/srag.csv","srag_datalake")  # Inicializa sem valor 
     
     def data_lake(self):
         self.bot_passo_1.executar_datalake()
