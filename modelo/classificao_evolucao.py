@@ -100,7 +100,7 @@ class ClassificacaoEvolucao:
             target_names=['MELHORA DE QUADRO', 'ÓBITO'],
             output_dict=True  # Para obter o relatório como um dicionário
         )
-        matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
+        #matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
         '''self.enviar_dados({
             "acuracia": acuracia,
             "relatorio_classificacao": relatorio_classificacao,

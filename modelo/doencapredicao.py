@@ -126,18 +126,25 @@ class DoencaPredictor:
         """
         Avalia o desempenho do modelo e exibe métricas de classificação.
         """
+        # Gerar previsões
         y_pred = np.argmax(self.model.predict(self.X_test), axis=1)
+        y_test_classes = self.y_test  # Mantém os rótulos verdadeiros
 
+        # Exibir métricas
+        print("Acurácia:", accuracy_score(y_test_classes, y_pred))
         print("\n🔍 Relatório de Classificação:\n", classification_report(
-            self.y_test, y_pred, target_names=self.label_encoder.classes_
+            y_test_classes, y_pred,
+            target_names=["Influenza", "Outro vírus", "Outro agente etiológico", "COVID-19"]
         ))
 
-        cm = confusion_matrix(self.y_test, y_pred)
+        # Gerar matriz de confusão
+        cm = confusion_matrix(y_test_classes, y_pred)
 
+        # Exibir matriz de confusão
         plt.figure(figsize=(6, 4))
         sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                    xticklabels=self.label_encoder.classes_,
-                    yticklabels=self.label_encoder.classes_)
+                    xticklabels=["Influenza", "Outro vírus", "Outro agente etiológico", "COVID-19"],
+                    yticklabels=["Influenza", "Outro vírus", "Outro agente etiológico", "COVID-19"])
         plt.xlabel('Previsto')
         plt.ylabel('Real')
         plt.title('Matriz de Confusão')
