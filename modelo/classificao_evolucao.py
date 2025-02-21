@@ -7,9 +7,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.utils import to_categorical
+from gcp_dataset_warehouse import GCP_Dataset
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 
 
 class ClassificacaoEvolucao:
@@ -99,11 +101,11 @@ class ClassificacaoEvolucao:
             output_dict=True  # Para obter o relatório como um dicionário
         )
         matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
-        self.enviar_dados({
+        '''self.enviar_dados({
             "acuracia": acuracia,
             "relatorio_classificacao": relatorio_classificacao,
             "matriz_confusao": matriz_confusao
-        })
+        })'''
 
     def enviar_dados(self,dados):
         """Envia as métricas para o endpoint Django."""
@@ -152,6 +154,11 @@ class ClassificacaoEvolucao:
         model = self.treinar_modelo(model, X_train, y_train)
         self.avaliar_modelo(model, X_test, y_test)
         #self.visualizar_resultados()
+
+
+gcp = GCP_Dataset()
+df = gcp.ler_gcp_DB()
+bot = ClassificacaoEvolucao(df)
 
 
 
