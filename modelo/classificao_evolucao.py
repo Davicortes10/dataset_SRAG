@@ -100,12 +100,12 @@ class ClassificacaoEvolucao:
             target_names=['MELHORA DE QUADRO', 'ÓBITO'],
             output_dict=True  # Para obter o relatório como um dicionário
         )
-        #matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
-        '''self.enviar_dados({
+        matriz_confusao = confusion_matrix(y_test_classes, y_pred_classes).tolist()
+        self.enviar_dados({
             "acuracia": acuracia,
             "relatorio_classificacao": relatorio_classificacao,
             "matriz_confusao": matriz_confusao
-        })'''
+        })
 
     def enviar_dados(self,dados):
         """Envia as métricas para o endpoint Django."""
@@ -159,6 +159,7 @@ class ClassificacaoEvolucao:
 gcp = GCP_Dataset()
 df = gcp.ler_gcp_DB()
 bot = ClassificacaoEvolucao(df)
+bot.executar_classificacao()
 
 
 

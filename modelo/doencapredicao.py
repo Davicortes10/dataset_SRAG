@@ -58,7 +58,7 @@ class DoencaPredictor:
         self.df.dropna(subset=["CLASSI_FIN"], inplace=True)
 
         # Filtrar apenas Influenza (1) e COVID-19 (5)
-        self.df = self.df[self.df["CLASSI_FIN"].isin([1, 5])]
+        self.df = self.df[self.df["CLASSI_FIN"].isin([1,2,3, 5])]
 
         # Renomear CLASSI_FIN para "Doenca" e substituir valores numéricos por texto
         self.df["Doenca"] = self.df["CLASSI_FIN"].replace({1: "Influenza", 2: "outro vírus", 3: "outro agente etiológico", 5: "COVID-19"})
