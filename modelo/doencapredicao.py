@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
+from gcp_dataset_warehouse import GCP_Dataset
 
 
 class DoencaPredictor:
@@ -176,10 +177,13 @@ class DoencaPredictor:
             plt.show()
 
 
+
+gcp = GCP_Dataset()
+dataset = gcp.ler_gcp_DB()
 modelo = DoencaPredictor(dataset)
 modelo.carregar_dados()
 modelo.preprocessar_dados()
 modelo.construir_modelo()
 modelo.treinar_modelo()
 modelo.avaliar_modelo()
-modelo.visualizar_resultados()
+#modelo.visualizar_resultados()
