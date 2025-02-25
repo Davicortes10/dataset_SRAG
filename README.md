@@ -29,8 +29,6 @@ Este projeto tem como objetivo **analisar e extrair insights valiosos** do datas
 
 ## **💂 Autores**
 👨‍💻 **Davi Oliveira Cortes** - Matrícula: 2020034190  
-👨‍💻 **Bryan Windson Queiroz de Souza** - Matrícula: 2021065987  
-👨‍💻 **Aleanse dos Santos Lima Rego** - Matrícula: 2021053215  
 
 📅 **Última Atualização:** *02/02/2025*  
 📈 **Versão:** *1.0*  
