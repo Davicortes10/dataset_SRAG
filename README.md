@@ -52,5 +52,5 @@ Todo o material sob esta licença é **software livre**:
 O espírito desta licença é que você **é livre para usar este material para qualquer finalidade, sem nenhum custo**. O único requisito é que, **se você utilizá-lo, nos dê o devido crédito**.  
 
 
-📌 **Desenvolvido por Davi Oliveira Cortes, Bryan Windson Queiroz de Souza e Aleanse dos Santos Lima Rego** 🚀
+📌 **Desenvolvido por Davi Oliveira Cortes** 🚀
 
